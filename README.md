@@ -1,4 +1,4 @@
-# A Go microservices backend for event ticket booking
+# Go microservices backend for event ticket booking
 
 ## Tech stack
 - Go for core service logic
@@ -124,12 +124,15 @@ ticketing-microservices/
     booking/
     payment/
     notification/
+    bin/
+    
     docker/
         gateway.Dockerfile
         user.Dockerfile
         ...
     k8s/
     proto/
+    
     go.mod
     go.sum
     docker-compose.yml
