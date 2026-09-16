@@ -2,7 +2,11 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"log"
+	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
 func main() {
@@ -13,5 +17,17 @@ func main() {
 		*port = "8000"
 	}
 
-	log.Printf("API Gateway running on port %v\n", *port)
+	router := gin.Default()
+
+	router.GET("/", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{
+			"message": "API Gateway running",
+		})
+	})
+
+	addr := fmt.Sprintf(":%s", *port)
+	err := router.Run(addr)
+	if err != nil {
+		log.Panic(err)
+	}
 }
