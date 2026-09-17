@@ -1,4 +1,4 @@
 # API Gateway service
 
 ## API endpoints
-- GET / : Returns {"message": "API Gateway running"}
+- GET /health : Returns {"message": "API Gateway running"}

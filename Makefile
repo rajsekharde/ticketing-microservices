@@ -1,16 +1,20 @@
 # Define the default target when running 'make' with no arguments
 .DEFAULT_GOAL := help
 
+# Prevents name conflicts with real files or folders
 .PHONY: proto run-gateway help
 
 
-# API Gateway server port
 GATEWAY_PORT ?= ""
+USER_PORT ?= ""
 
-## run-gateway: Run the API Gateway
+## run-gateway: Start the API Gateway
 run-gateway:
 	go run ./gateway -port ${GATEWAY_PORT}
 
+## run-user: Start the User service
+run-user:
+	go run ./user
 
 # Find all .proto files in the proto/ directory and its subdirectories
 PROTO_FILES := $(shell find proto -name "*.proto")

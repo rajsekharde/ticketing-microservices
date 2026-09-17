@@ -21,26 +21,26 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-// Prefixed enum values to prevent name clashes
+// Generated code contanins UserRole prefix for all enum values
 type UserRole int32
 
 const (
-	UserRole_USER_ROLE_UNSPECIFIED UserRole = 0
-	UserRole_USER_ROLE_CUSTOMER    UserRole = 1
-	UserRole_USER_ROLE_ADMIN       UserRole = 2
+	UserRole_UNSPECIFIED UserRole = 0
+	UserRole_CUSTOMER    UserRole = 1
+	UserRole_ADMIN       UserRole = 2
 )
 
 // Enum value maps for UserRole.
 var (
 	UserRole_name = map[int32]string{
-		0: "USER_ROLE_UNSPECIFIED",
-		1: "USER_ROLE_CUSTOMER",
-		2: "USER_ROLE_ADMIN",
+		0: "UNSPECIFIED",
+		1: "CUSTOMER",
+		2: "ADMIN",
 	}
 	UserRole_value = map[string]int32{
-		"USER_ROLE_UNSPECIFIED": 0,
-		"USER_ROLE_CUSTOMER":    1,
-		"USER_ROLE_ADMIN":       2,
+		"UNSPECIFIED": 0,
+		"CUSTOMER":    1,
+		"ADMIN":       2,
 	}
 )
 
@@ -136,7 +136,7 @@ func (x *User) GetRole() UserRole {
 	if x != nil {
 		return x.Role
 	}
-	return UserRole_USER_ROLE_UNSPECIFIED
+	return UserRole_UNSPECIFIED
 }
 
 type GetUserRequest struct {
@@ -194,11 +194,11 @@ const file_proto_user_user_proto_rawDesc = "" +
 	"\x04name\x18\x03 \x01(\tR\x04name\x12\"\n" +
 	"\x04role\x18\x04 \x01(\x0e2\x0e.user.UserRoleR\x04role\" \n" +
 	"\x0eGetUserRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id*R\n" +
-	"\bUserRole\x12\x19\n" +
-	"\x15USER_ROLE_UNSPECIFIED\x10\x00\x12\x16\n" +
-	"\x12USER_ROLE_CUSTOMER\x10\x01\x12\x13\n" +
-	"\x0fUSER_ROLE_ADMIN\x10\x022:\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id*4\n" +
+	"\bUserRole\x12\x0f\n" +
+	"\vUNSPECIFIED\x10\x00\x12\f\n" +
+	"\bCUSTOMER\x10\x01\x12\t\n" +
+	"\x05ADMIN\x10\x022:\n" +
 	"\vUserService\x12+\n" +
 	"\aGetUser\x12\x14.user.GetUserRequest\x1a\n" +
 	".user.UserBBZ@github.com/rajsekharde/ticketing-microservices/proto/user;userpbb\x06proto3"

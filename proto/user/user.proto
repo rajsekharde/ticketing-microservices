@@ -5,11 +5,11 @@ package user;
 // Package directory for storing generated code. userpb = package alias
 option go_package = "github.com/rajsekharde/ticketing-microservices/proto/user;userpb";
 
-// Prefixed enum values to prevent name clashes
+// Generated code contanins UserRole prefix for all enum values
 enum UserRole {
-  USER_ROLE_UNSPECIFIED = 0;
-  USER_ROLE_CUSTOMER = 1;
-  USER_ROLE_ADMIN = 2;
+  UNSPECIFIED = 0;
+  CUSTOMER = 1;
+  ADMIN = 2;
 }
 
 message User {
