@@ -7,7 +7,7 @@ services:
     ports:
       - "5433:5432"
     volumes:
-      
+      # Postgres automatically runs all .sql, .sh scripts in this location on start up
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
 
 # Run: docker compose up -d

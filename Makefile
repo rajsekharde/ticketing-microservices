@@ -4,13 +4,9 @@
 # Prevents name conflicts with real files or folders
 .PHONY: proto run-gateway help
 
-
-GATEWAY_PORT ?= ""
-USER_PORT ?= ""
-
 ## run-gateway: Start the API Gateway
 run-gateway:
-	go run ./gateway -port ${GATEWAY_PORT}
+	go run ./gateway
 
 ## run-user: Start the User service
 run-user:
