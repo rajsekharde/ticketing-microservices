@@ -28,6 +28,20 @@ func (s *server) GetUser(ctx context.Context, req *userpb.GetUserRequest) (*user
 func main() {
 	cfg := loadEnv(".env")
 
+	db, err := newDatabase(cfg)
+	if err != nil {
+		log.Fatalf("Failed to connect to DB: %v", err)
+	}
+	defer db.close()
+	log.Println("Connected to database")
+
+	// create tables
+	err = db.initTables()
+	if err != nil {
+		log.Fatalf("Failed to initialize DB tables: %v", err)
+	}
+	log.Println("Database tables initialized")
+
 	addr := ":" + cfg.port
 	lis, err := net.Listen("tcp", addr)
 	if err != nil {
@@ -46,6 +60,10 @@ func main() {
 
 type config struct {
 	port string
+	db_host string
+	db_port string
+	db_user string
+	db_password string
 }
 
 func loadEnv(path string) *config {
@@ -61,5 +79,9 @@ func loadEnv(path string) *config {
 
 	return &config{
 		port: port,
+		db_host: os.Getenv("POSTGRES_HOST"),
+		db_port: os.Getenv("POSTGRES_PORT"),
+		db_user: os.Getenv("POSTGRES_USER"),
+		db_password: os.Getenv("POSTGRES_PASSWORD"),
 	}
 }
