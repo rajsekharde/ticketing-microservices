@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+package user;
+
+// Package directory for storing generated code. userpb = package alias
+option go_package = "github.com/rajsekharde/ticketing-microservices/proto/user;userpb";
+
+// Prefixed enum values to prevent name clashes
+enum UserRole {
+  USER_ROLE_UNSPECIFIED = 0;
+  USER_ROLE_CUSTOMER = 1;
+  USER_ROLE_ADMIN = 2;
+}
+
+message User {
+  int64  id    = 1;
+  string email = 2;
+  string name  = 3;
+  UserRole role = 4;
+}
+
+message GetUserRequest {
+  int64 id = 1;
+}
+
+service UserService {
+    rpc GetUser (GetUserRequest) returns (User);
+}

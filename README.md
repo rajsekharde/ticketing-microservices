@@ -132,6 +132,12 @@ ticketing-microservices/
         ...
     k8s/
     proto/
+        user/
+            user.proto
+            user.pb.go
+            user_grpc.pb.go
+        event/
+        ...
     
     go.mod
     go.sum
