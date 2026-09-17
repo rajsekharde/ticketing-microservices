@@ -1,0 +1,14 @@
+services:
+  postgres:
+    container_name: ticketing_microservices_postgres
+    image: postgres:15-alpine
+    env_file:
+      - .env
+    ports:
+      - "5433:5432"
+    volumes:
+      
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+
+# Run: docker compose up -d
+# Stop: docker compose down -v  (Removes all containers & volumes)

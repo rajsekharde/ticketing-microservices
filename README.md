@@ -6,6 +6,7 @@
 - RabbitMQ as message broker
 - Docker for containerization
 - kind for local Kubernetes deployment
+- Redis for caching
 
 ## Services
 
@@ -141,6 +142,7 @@ ticketing-microservices/
     
     go.mod
     go.sum
+    inti.sql
     docker-compose.yml
     Makefile
     README.md
