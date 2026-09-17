@@ -7,6 +7,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+
+	userpb "github.com/rajsekharde/ticketing-microservices/proto/user"
 )
 
 // Returns status of server
@@ -50,5 +52,42 @@ func getUserById(c *gin.Context) {
 		"email": user.GetEmail(),
 		"name":  user.GetName(),
 		"role":  user.GetRole().String(), // Converts enum to readable string (e.g. "USER_ROLE_CUSTOMER")
+	})
+}
+
+// Creates a new user
+func createUser(c *gin.Context) {
+	var req createUserRequest
+
+    // Bind request body to the struct and check for errors
+    if err := c.ShouldBindJSON(&req); err != nil {
+        c.JSON(http.StatusBadRequest, gin.H{
+            "error": err.Error(),
+        })
+        return
+    }
+
+	grpcReq := userpb.CreateUserRequest{
+		Email: req.Email,
+		Name: req.Name,
+	}
+	switch req.Role {
+	case "CUSTOMER":
+		grpcReq.Role = userpb.UserRole_CUSTOMER
+	case "ADMIN":
+		grpcReq.Role = userpb.UserRole_ADMIN
+	default:
+		grpcReq.Role = userpb.UserRole_UNSPECIFIED
+	}
+
+	_, err := user.createUser(c.Request.Context(), &grpcReq)
+	if err != nil {
+
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to create user"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":    "user created",
 	})
 }

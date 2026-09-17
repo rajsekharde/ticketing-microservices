@@ -9,14 +9,18 @@ import (
 	"github.com/joho/godotenv"
 	userpb "github.com/rajsekharde/ticketing-microservices/proto/user"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
+
+var db *database
 
 type server struct {
 	userpb.UnimplementedUserServiceServer
 }
 
 func (s *server) GetUser(ctx context.Context, req *userpb.GetUserRequest) (*userpb.User, error) {
-	log.Printf("Get User: %v\n", req.GetId())
+	log.Printf("Get User: id = %v\n", req.GetId())
 	return &userpb.User{
 		Id: req.Id,
 		Email: "test@mail.com",
@@ -25,10 +29,27 @@ func (s *server) GetUser(ctx context.Context, req *userpb.GetUserRequest) (*user
 	}, nil
 }
 
+func (s *server) CreateUser(ctx context.Context, req *userpb.CreateUserRequest) (*userpb.CreateUserResponse, error) {
+    err := db.createUser(&createUserRequest{
+        Email: req.Email,
+        Name:  req.Name,
+        Role:  req.Role.String(),
+    })
+    if err != nil {
+        log.Printf("[FAILED] Create User: email = %v, error: %v\n", req.Email, err.Error())
+        // Return a proper gRPC status error (e.g., AlreadyExists if email is taken)
+        return nil, status.Errorf(codes.Internal, "failed to insert user into database")
+    }
+
+    log.Printf("Create User: email = %v\n", req.Email)
+    return &userpb.CreateUserResponse{}, nil // No error field needed in response
+}
+
 func main() {
 	cfg := loadEnv(".env")
 
-	db, err := newDatabase(cfg)
+	var err error
+	db, err = newDatabase(cfg)
 	if err != nil {
 		log.Fatalf("Failed to connect to DB: %v", err)
 	}

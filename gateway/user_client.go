@@ -38,3 +38,9 @@ func (c *userClient) getUser(ctx context.Context, id int64) (*userpb.User, error
 	defer cancel()
 	return c.stub.GetUser(ctx, &userpb.GetUserRequest{Id: id})
 }
+
+func (c *userClient) createUser(ctx context.Context, req *userpb.CreateUserRequest) (*userpb.CreateUserResponse, error) {
+	ctx, cancel := context.WithTimeout(ctx, 2*time.Second)
+	defer cancel()
+	return c.stub.CreateUser(ctx, req)
+}

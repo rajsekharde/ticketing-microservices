@@ -26,6 +26,7 @@ func main() {
 	router := gin.Default()
 
 	router.GET("/health", getHealth)
+	router.POST("/users", createUser)
 	router.GET("/users/:id", getUserById)
 
 	addr := fmt.Sprintf(":%s", cfg.port)

@@ -8,6 +8,34 @@
 - kind for local Kubernetes deployment
 - Redis for caching
 
+## Running the application
+
+Generate the protobuf code after making any changes to .proto files:
+```bash
+make proto
+```
+
+1. Run postgres in a docker container
+```bash
+docker compose up -d
+```
+
+2. Run the user service
+```bash
+make run-user
+```
+
+3. Run the gateway service
+```bash
+make run-gateway
+```
+
+4. Stop services:
+```bash
+# postgres
+docker compose down -v
+```
+
 ## Services
 
 ### User

@@ -57,3 +57,13 @@ func (d *database) initTables() error {
 	_, err := d.db.Exec(query)
 	return err
 }
+
+func (d *database) createUser(user *createUserRequest) error {
+	query := `
+	INSERT INTO users (email, name, role) VALUES
+	($1, $2, $3);
+	`
+
+	_, err := d.db.Exec(query, user.Email, user.Name, user.Role)
+	return err
+}

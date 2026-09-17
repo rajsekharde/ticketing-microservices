@@ -8,15 +8,29 @@ option go_package = "github.com/rajsekharde/ticketing-microservices/proto/user;u
 // Generated code contanins UserRole prefix for all enum values
 enum UserRole {
   UNSPECIFIED = 0;
-  CUSTOMER = 1;
-  ADMIN = 2;
+  CUSTOMER    = 1;
+  ADMIN       = 2;
 }
 
+// Create user
+
+message CreateUserRequest {
+  string   email = 1;
+  string   name  = 2;
+  UserRole role  = 3;
+}
+
+message CreateUserResponse {
+  //
+}
+
+// Get user details
+
 message User {
-  int64  id    = 1;
-  string email = 2;
-  string name  = 3;
-  UserRole role = 4;
+  int64    id    = 1;
+  string   email = 2;
+  string   name  = 3;
+  UserRole role  = 4;
 }
 
 message GetUserRequest {
@@ -24,5 +38,6 @@ message GetUserRequest {
 }
 
 service UserService {
-    rpc GetUser (GetUserRequest) returns (User);
+  rpc GetUser (GetUserRequest) returns (User);
+  rpc CreateUser (CreateUserRequest) returns (CreateUserResponse);
 }
