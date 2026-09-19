@@ -9,6 +9,7 @@ import (
 	"google.golang.org/grpc/status"
 
 	userpb "github.com/rajsekharde/ticketing-microservices/proto/user"
+	"github.com/rajsekharde/ticketing-microservices/shared"
 )
 
 // Returns status of server
@@ -57,7 +58,7 @@ func getUserById(c *gin.Context) {
 
 // Creates a new user
 func createUser(c *gin.Context) {
-	var req createUserRequest
+	var req shared.CreateUserRequest
 
     // Bind request body to the struct and check for errors
     if err := c.ShouldBindJSON(&req); err != nil {
@@ -82,7 +83,6 @@ func createUser(c *gin.Context) {
 
 	_, err := user.createUser(c.Request.Context(), &grpcReq)
 	if err != nil {
-
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to create user"})
 		return
 	}

@@ -7,6 +7,7 @@ import (
 	"time"
 
 	_ "github.com/jackc/pgx/v5/stdlib"
+	"github.com/rajsekharde/ticketing-microservices/shared"
 )
 
 type database struct {
@@ -49,7 +50,7 @@ func (d *database) initTables() error {
 	id SERIAL PRIMARY KEY,
 	email VARCHAR(255) UNIQUE NOT NULL,
 	name VARCHAR(100) NOT NULL,
-	role VARCHAR(10) NOT NULL,
+	role VARCHAR(20) NOT NULL,
 	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 	);
 	`
@@ -58,7 +59,7 @@ func (d *database) initTables() error {
 	return err
 }
 
-func (d *database) createUser(user *createUserRequest) error {
+func (d *database) createUser(user *shared.CreateUserRequest) error {
 	query := `
 	INSERT INTO users (email, name, role) VALUES
 	($1, $2, $3);

@@ -11,6 +11,7 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"github.com/rajsekharde/ticketing-microservices/shared"
 )
 
 var db *database
@@ -30,7 +31,7 @@ func (s *server) GetUser(ctx context.Context, req *userpb.GetUserRequest) (*user
 }
 
 func (s *server) CreateUser(ctx context.Context, req *userpb.CreateUserRequest) (*userpb.CreateUserResponse, error) {
-    err := db.createUser(&createUserRequest{
+    err := db.createUser(&shared.CreateUserRequest{
         Email: req.Email,
         Name:  req.Name,
         Role:  req.Role.String(),
