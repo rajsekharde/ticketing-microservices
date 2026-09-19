@@ -2,16 +2,17 @@ package main
 
 import (
 	"context"
+	"database/sql"
 	"log"
 	"net"
 	"os"
 
 	"github.com/joho/godotenv"
 	userpb "github.com/rajsekharde/ticketing-microservices/proto/user"
+	"github.com/rajsekharde/ticketing-microservices/shared"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-	"github.com/rajsekharde/ticketing-microservices/shared"
 )
 
 var db *database
@@ -21,17 +22,35 @@ type server struct {
 }
 
 func (s *server) GetUser(ctx context.Context, req *userpb.GetUserRequest) (*userpb.User, error) {
+	user, err := db.getUserQuery(int(req.Id))
+	if err != nil {
+		log.Printf("[FAILED] Get User: id = %v, error: %v\n", req.Id, err.Error())
+		if err == sql.ErrNoRows {
+			return nil, status.Errorf(codes.NotFound, "user not found in database")
+		}
+		return nil, status.Errorf(codes.Internal, "could not fetch user")
+	}
+
+	resUser := userpb.User{
+		Id: int64(user.id),
+		Email: user.email,
+		Name: user.name,
+	}
+	switch user.role {
+	case "ADMIN":
+		resUser.Role = userpb.UserRole_ADMIN
+	case "CUSTOMER":
+		resUser.Role = userpb.UserRole_CUSTOMER
+	default:
+		resUser.Role = userpb.UserRole_UNSPECIFIED
+	}
+
 	log.Printf("Get User: id = %v\n", req.GetId())
-	return &userpb.User{
-		Id: req.Id,
-		Email: "test@mail.com",
-		Name: "RSD",
-		Role: userpb.UserRole_CUSTOMER,
-	}, nil
+	return &resUser, nil
 }
 
 func (s *server) CreateUser(ctx context.Context, req *userpb.CreateUserRequest) (*userpb.CreateUserResponse, error) {
-    err := db.createUser(&shared.CreateUserRequest{
+    err := db.createUserQuery(&shared.CreateUserRequest{
         Email: req.Email,
         Name:  req.Name,
         Role:  req.Role.String(),

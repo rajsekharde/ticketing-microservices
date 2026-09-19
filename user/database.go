@@ -7,6 +7,7 @@ import (
 	"time"
 
 	_ "github.com/jackc/pgx/v5/stdlib"
+	// userpb "github.com/rajsekharde/ticketing-microservices/proto/user"
 	"github.com/rajsekharde/ticketing-microservices/shared"
 )
 
@@ -59,7 +60,7 @@ func (d *database) initTables() error {
 	return err
 }
 
-func (d *database) createUser(user *shared.CreateUserRequest) error {
+func (d *database) createUserQuery(user *shared.CreateUserRequest) error {
 	query := `
 	INSERT INTO users (email, name, role) VALUES
 	($1, $2, $3);
@@ -67,4 +68,24 @@ func (d *database) createUser(user *shared.CreateUserRequest) error {
 
 	_, err := d.db.Exec(query, user.Email, user.Name, user.Role)
 	return err
+}
+
+type user struct {
+	id int
+	email string
+	name string
+	role string
+}
+func (d *database) getUserQuery(id int) (*user, error) {
+	query := `
+	SELECT id, email, name, role FROM users WHERE id = $1;
+	`
+
+	var user user
+	err := d.db.QueryRow(query, id).Scan(&user.id, &user.email, &user.name, &user.role)
+	if err != nil {
+		return nil, err
+	}
+
+	return &user, nil
 }

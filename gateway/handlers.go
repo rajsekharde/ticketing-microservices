@@ -48,11 +48,11 @@ func getUserById(c *gin.Context) {
 	}
 
 	// 4. Return user JSON response
-	c.JSON(http.StatusOK, gin.H{
-		"id":    user.GetId(),
-		"email": user.GetEmail(),
-		"name":  user.GetName(),
-		"role":  user.GetRole().String(), // Converts enum to readable string (e.g. "USER_ROLE_CUSTOMER")
+	c.JSON(http.StatusOK, shared.GetUserResponse{
+		Id:    int(user.GetId()),
+		Email: user.GetEmail(),
+		Name:  user.GetName(),
+		Role:  user.GetRole().String(), // Converts enum to readable string (e.g. "USER_ROLE_CUSTOMER")
 	})
 }
 
