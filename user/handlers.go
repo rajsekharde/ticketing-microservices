@@ -61,3 +61,7 @@ func (s *server) CreateUser(ctx context.Context, req *userpb.CreateUserRequest) 
     log.Printf("Create User: email = %v\n", req.Email)
     return &userpb.CreateUserResponse{}, nil // No error field needed in response
 }
+
+// func (s *server) UserLogin(ctx context.Context, req *userpb.UserLoginRequest) (*userpb.UserLoginResponse, error) {
+// 	//
+// }
