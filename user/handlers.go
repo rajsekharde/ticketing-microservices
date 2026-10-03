@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"log"
+	"strconv"
 
 	userpb "github.com/rajsekharde/ticketing-microservices/proto/user"
 	// "github.com/rajsekharde/ticketing-microservices/shared"
@@ -63,7 +64,7 @@ func (s *server) CreateUser(ctx context.Context, req *userpb.CreateUserRequest) 
 }
 
 func (s *server) UserLogin(ctx context.Context, req *userpb.UserLoginRequest) (*userpb.UserLoginResponse, error) {
-	hash, err := db.getPasswordQuery(req.Email)
+	id, hash, err := db.getPasswordQuery(req.Email)
 	if err != nil {
 		log.Printf("[FAILED] Login User: email = %v, error: %v\n", req.Email, err.Error())
 		return nil, status.Errorf(codes.Internal, "failed to fetch password hash")
@@ -74,7 +75,13 @@ func (s *server) UserLogin(ctx context.Context, req *userpb.UserLoginRequest) (*
 		return nil, status.Errorf(codes.Unauthenticated, "password does not match stored hash")
 	}
 
+	jwt, err := generateAccessToken(strconv.Itoa(id))
+	if err != nil {
+		log.Printf("[FAILED] Login User: email = %v, error: %v\n", req.Email, err.Error())
+		return nil, status.Errorf(codes.Internal, "failed to generate access token")
+	}
+
 	return &userpb.UserLoginResponse{
-		Jwt: "",
+		Jwt: jwt,
 	}, nil
 }

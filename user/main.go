@@ -16,11 +16,13 @@ type server struct {
 	userpb.UnimplementedUserServiceServer
 }
 
+var cfg config
+
 func main() {
-	cfg := loadEnv(".env")
+	cfg = *loadEnv(".env")
 
 	var err error
-	db, err = newDatabase(cfg)
+	db, err = newDatabase(&cfg)
 	if err != nil {
 		log.Fatalf("Failed to connect to DB: %v", err)
 	}
@@ -56,6 +58,8 @@ type config struct {
 	db_port string
 	db_user string
 	db_password string
+	jwt_secret_key string
+	access_token_expiry_mins int
 }
 
 func loadEnv(path string) *config {

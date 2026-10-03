@@ -99,15 +99,17 @@ func (d *database) getUserQuery(id int) (*user, error) {
 }
 
 // Returns the stored password hash for user with given email
-func (d *database) getPasswordQuery(email string) (string, error) {
+func (d *database) getPasswordQuery(email string) (int, string, error) {
 	query := `
-	SELECT password_hash FROM users WHERE email = $1;
+	SELECT id, password_hash FROM users WHERE email = $1;
 	`
+
+	var id int
 	var hash string
-	err := d.db.QueryRow(query, email).Scan(&hash)
+	err := d.db.QueryRow(query, email).Scan(&id, &hash)
 	if err != nil {
-		return "", err
+		return 0, "", err
 	}
-	
-	return hash, nil;
+
+	return id, hash, nil;
 }
