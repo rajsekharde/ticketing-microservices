@@ -15,3 +15,9 @@ type GetUserResponse struct {
 	Name string `json:"name"`
 	Role string `json:"role"`
 }
+
+// gateway request for user login
+type UserLoginRequest struct {
+	Email string `json:"email"`
+	Password string `json:"password"`
+}
