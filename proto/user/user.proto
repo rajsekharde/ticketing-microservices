@@ -15,9 +15,10 @@ enum UserRole {
 // Create user
 
 message CreateUserRequest {
-  string   email = 1;
-  string   name  = 2;
-  UserRole role  = 3;
+  string   email    = 1;
+  string   name     = 2;
+  string   password = 3;
+  UserRole role     = 4;
 }
 
 message CreateUserResponse {

@@ -71,6 +71,7 @@ func createUser(c *gin.Context) {
 	grpcReq := userpb.CreateUserRequest{
 		Email: req.Email,
 		Name: req.Name,
+		Password: req.Password,
 	}
 	switch req.Role {
 	case "CUSTOMER":

@@ -2,13 +2,13 @@
 
 ## API endpoints
 - GET /health : Returns {"message": "API Gateway running"}
-- POST /users : Creates a new user
-- GET /users/:id : Returns user data by ID
+- POST /user : Creates a new user
+- GET /user/:id : Returns user data by ID
 
 ## Request flow
 Create User:
 ```bash
-Client sends POST /users to Gateway with credentials as JSON payload
+Client sends POST /user to Gateway with credentials as JSON payload
 Gateway unmarshalls the JSON body into a CreateUserRequest struct
 A userpb.CreateRequestUser struct is created using the credentials, as req
 CreateUser rpc in user service is invoked with the req struct

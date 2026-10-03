@@ -8,7 +8,7 @@ import (
 
 	_ "github.com/jackc/pgx/v5/stdlib"
 	// userpb "github.com/rajsekharde/ticketing-microservices/proto/user"
-	"github.com/rajsekharde/ticketing-microservices/shared"
+	// "github.com/rajsekharde/ticketing-microservices/shared"
 )
 
 type database struct {
@@ -50,6 +50,7 @@ func (d *database) initTables() error {
 	CREATE TABLE IF NOT EXISTS users (
 	id SERIAL PRIMARY KEY,
 	email VARCHAR(255) UNIQUE NOT NULL,
+	password_hash VARCHAR(255) NOT NULL,
 	name VARCHAR(100) NOT NULL,
 	role VARCHAR(20) NOT NULL,
 	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -60,13 +61,20 @@ func (d *database) initTables() error {
 	return err
 }
 
-func (d *database) createUserQuery(user *shared.CreateUserRequest) error {
+type dbUser struct {
+	email string
+	password_hash string
+	name string
+	role string
+}
+
+func (d *database) createUserQuery(user *dbUser) error {
 	query := `
-	INSERT INTO users (email, name, role) VALUES
-	($1, $2, $3);
+	INSERT INTO users (email, password_hash, name, role) VALUES
+	($1, $2, $3, $4);
 	`
 
-	_, err := d.db.Exec(query, user.Email, user.Name, user.Role)
+	_, err := d.db.Exec(query, user.email, user.password_hash, user.name, user.role)
 	return err
 }
 
