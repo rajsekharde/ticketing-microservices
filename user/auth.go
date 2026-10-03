@@ -21,18 +21,18 @@ func checkPasswordHash(password, hash string) bool {
 }
 
 type claims struct {
-	userId string
+	UserId string
 	jwt.RegisteredClaims
 }
 // Generates a new JWT with the user id and secret key
 func generateAccessToken(userId string) (string, error) {
 	claims := &claims{
-		userId: userId,
+		UserId: userId,
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Duration(cfg.access_token_expiry_mins) * time.Minute)),
 			IssuedAt: jwt.NewNumericDate(time.Now()),
 		},
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	return token.SignedString(cfg.jwt_secret_key)
+	return token.SignedString([]byte(cfg.jwt_secret_key))
 }

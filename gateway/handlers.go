@@ -88,7 +88,35 @@ func createUser(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
+	c.JSON(http.StatusCreated, gin.H{
 		"status":    "user created",
+	})
+}
+
+// Handles user login
+func userLogin(c *gin.Context) {
+	var req shared.UserLoginRequest
+
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	grpcReq := userpb.UserLoginRequest{
+		Email: req.Email,
+		Password: req.Password,
+	}
+	resp, err := user.userLogin(c.Request.Context(), &grpcReq)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"access_token": resp.Jwt,
 	})
 }

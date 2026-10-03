@@ -26,8 +26,9 @@ func main() {
 	router := gin.Default()
 
 	router.GET("/health", getHealth)
-	router.POST("/user", createUser)
+	router.POST("/user/register", createUser)
 	router.GET("/user/:id", getUserById)
+	router.POST("/user/login", userLogin)
 
 	addr := fmt.Sprintf(":%s", cfg.port)
 	err = router.Run(addr)

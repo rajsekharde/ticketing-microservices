@@ -81,6 +81,7 @@ func (s *server) UserLogin(ctx context.Context, req *userpb.UserLoginRequest) (*
 		return nil, status.Errorf(codes.Internal, "failed to generate access token")
 	}
 
+	log.Printf("Login User: email = %v\n", req.Email)
 	return &userpb.UserLoginResponse{
 		Jwt: jwt,
 	}, nil
