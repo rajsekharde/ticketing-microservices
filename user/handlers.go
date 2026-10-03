@@ -62,6 +62,19 @@ func (s *server) CreateUser(ctx context.Context, req *userpb.CreateUserRequest) 
     return &userpb.CreateUserResponse{}, nil // No error field needed in response
 }
 
-// func (s *server) UserLogin(ctx context.Context, req *userpb.UserLoginRequest) (*userpb.UserLoginResponse, error) {
-// 	//
-// }
+func (s *server) UserLogin(ctx context.Context, req *userpb.UserLoginRequest) (*userpb.UserLoginResponse, error) {
+	hash, err := db.getPasswordQuery(req.Email)
+	if err != nil {
+		log.Printf("[FAILED] Login User: email = %v, error: %v\n", req.Email, err.Error())
+		return nil, status.Errorf(codes.Internal, "failed to fetch password hash")
+	}
+
+	if checkPasswordHash(req.Password, hash) == false {
+		log.Printf("[FAILED] Login User: email = %v, error: Invalid password\n", req.Email)
+		return nil, status.Errorf(codes.Unauthenticated, "password does not match stored hash")
+	}
+
+	return &userpb.UserLoginResponse{
+		Jwt: "",
+	}, nil
+}
