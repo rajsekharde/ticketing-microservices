@@ -6,6 +6,7 @@
 - Get user info
 
 ## Database schema
+
 users table:
 - id: int, Primary key, auto-incrementing
 - email: varchar(255)
