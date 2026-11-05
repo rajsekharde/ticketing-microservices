@@ -24,10 +24,11 @@ func main() {
 	var err error
 	db, err = newDatabase(&cfg)
 	if err != nil {
-		log.Fatalf("Failed to connect to DB: %v", err)
+		log.Printf("Failed to connect to database: %v", err)
+	} else {
+		log.Printf("Connected to database: %v\n", cfg.db_name)
 	}
 	defer db.close()
-	log.Println("Connected to database")
 
 	// create tables
 	err = db.initTables()
@@ -58,6 +59,7 @@ type config struct {
 	db_port string
 	db_user string
 	db_password string
+	db_name string
 	jwt_secret_key string
 	access_token_expiry_mins int
 }
@@ -79,5 +81,6 @@ func loadEnv(path string) *config {
 		db_port: os.Getenv("POSTGRES_PORT"),
 		db_user: os.Getenv("POSTGRES_USER"),
 		db_password: os.Getenv("POSTGRES_PASSWORD"),
+		db_name: os.Getenv("USER_DB"),
 	}
 }

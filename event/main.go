@@ -14,8 +14,18 @@ type server struct {
 	eventpb.UnimplementedEventServiceServer
 }
 
+var cfg config
+
 func main() {
-	cfg := loadEnv(".env")
+	cfg = loadEnv(".env")
+
+	db, err := newDatabase(&cfg)
+	if err != nil {
+		log.Printf("Failed to connect to database: %v\n", err)
+	} else {
+		log.Printf("Connected to database: %v\n", cfg.db_name)
+	}
+	defer db.Close()
 
 	addr := ":" + cfg.port
 	lis, err := net.Listen("tcp", addr)
@@ -35,6 +45,11 @@ func main() {
 
 type config struct {
 	port string
+	db_host string
+	db_port string
+	db_user string
+	db_password string
+	db_name string
 }
 
 func loadEnv(path string) config {
@@ -50,5 +65,10 @@ func loadEnv(path string) config {
 
 	return config{
 		port: port,
+		db_host: os.Getenv("POSTGRES_HOST"),
+		db_port: os.Getenv("POSTGRES_PORT"),
+		db_user: os.Getenv("POSTGRES_USER"),
+		db_password: os.Getenv("POSTGRES_PASSWORD"),
+		db_name: os.Getenv("EVENT_DB"),
 	}
 }

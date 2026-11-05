@@ -18,8 +18,8 @@ type database struct {
 
 func newDatabase(cfg *config) (*database, error) {
 	// Connection string format: postgres://username:password@host:port/dbname?sslmode=disable
-	url := fmt.Sprintf("postgres://%s:%s@%s:%s/user_db?sslmode=disable",
-	cfg.db_user, cfg.db_password, cfg.db_host, cfg.db_port)
+	url := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=disable",
+	cfg.db_user, cfg.db_password, cfg.db_host, cfg.db_port, cfg.db_name)
 
 	// intialize datatbase handle, registers configuration, driver, and connection string
 	db, err := sql.Open("pgx", url)
