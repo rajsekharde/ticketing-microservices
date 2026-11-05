@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package event;
+
+option go_package = "github.com/rajsekharde/ticketing-microservices/proto/event;eventpb";
+
+message CreateVenueRequest {
+    string name = 1;
+    string address = 2;
+    int64 capacity = 3;
+}
+
+message CreateVenueResponse {}
+
+service EventService {
+    rpc CreateVenue (CreateVenueRequest) returns (CreateVenueResponse);
+}

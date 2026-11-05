@@ -1,5 +1,15 @@
 # Event service
 
+## Functions
+
+- Add a venue
+    - Create entries for the venue and its seats
+- Add an event
+    - Create entries for an event and its event_seats
+- Get event info
+- Get seat info for an event
+- Update event_seats
+
 ## Database schema
 
 events table:
@@ -26,3 +36,8 @@ event_seats table: (Junction table)
 - seat_id
 - status
 - price
+
+## Steps
+- Design database schema
+- Determine scope of API for the service
+- Create proto file for the gRPC API
