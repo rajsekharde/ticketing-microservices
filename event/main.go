@@ -19,13 +19,22 @@ var cfg config
 func main() {
 	cfg = loadEnv(".env")
 
+	// connect to database
 	db, err := newDatabase(&cfg)
 	if err != nil {
 		log.Printf("Failed to connect to database: %v\n", err)
 	} else {
 		log.Printf("Connected to database: %v\n", cfg.db_name)
 	}
-	defer db.Close()
+	defer db.close()
+
+	// create tables
+	err = db.initTables()
+	if err != nil {
+		log.Printf("Failed to initialize DB tables: %v\n", err)
+	} else {
+		log.Println("Initialized DB tables")
+	}
 
 	addr := ":" + cfg.port
 	lis, err := net.Listen("tcp", addr)

@@ -12,23 +12,22 @@
 
 ## Database schema
 
+venues table:
+- id
+- name
+- address
+
+seats table:
+- id
+- venue_id
+- seat_number
+
 events table:
 - id
 - venue_id
 - name
 - time
 - duration
-
-venues table:
-- id
-- name
-- address
-- capacity
-
-seats table:
-- id
-- venue_id
-- seat_number
 
 event_seats table: (Junction table)
 - id

@@ -35,7 +35,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("Failed to initialize DB tables: %v", err)
 	}
-	log.Println("Database tables initialized")
+	log.Println("Initialized DB tables")
 
 	addr := ":" + cfg.port
 	lis, err := net.Listen("tcp", addr)

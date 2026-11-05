@@ -14,6 +14,7 @@ type database struct {
 	db *sql.DB
 }
 
+// Creates a new database connection. Uses values from config struct to create DB URL
 func newDatabase(cfg *config) (*database, error) {
 	// Connection string format: postgres://username:password@host:port/dbname?sslmode=disable
 	url := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=disable",
@@ -39,6 +40,45 @@ func newDatabase(cfg *config) (*database, error) {
 	}, nil
 }
 
-func (d *database) Close() {
+// Closes the DB connection
+func (d *database) close() {
 	d.db.Close()
+}
+
+// Creates DB tables for event service
+func (d *database) initTables() error {
+	queries := []string {
+		`CREATE TABLE IF NOT EXISTS venues (
+		id SERIAL PRIMARY KEY,
+		name VARCHAR(100) NOT NULL,
+		address VARCHAR(100) NOT NULL
+		);`,
+		`CREATE TABLE IF NOT EXISTS seats (
+		id SERIAL PRIMARY KEY,
+		venue_id INT NOT NULL,
+		seat_number VARCHAR(10) NOT NULL
+		);`,
+		`CREATE TABLE IF NOT EXISTS events (
+		id SERIAL PRIMARY KEY,
+		venue_id INT NOT NULL,
+		name VARCHAR(100) NOT NULL,
+		time TIMESTAMP NOT NULL,
+		duration INTERVAL
+		)`,
+		`CREATE TABLE IF NOT EXISTS event_seats (
+		id SERIAL PRIMARY KEY,
+		event_id INT NOT NULL,
+		seat_id INT NOT NULL,
+		status VARCHAR(20) DEFAULT 'AVAILABLE',
+		price INT NOT NULL
+		)`,
+	}
+
+	for _, query := range queries {
+		_, err := d.db.Exec(query)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
