@@ -10,6 +10,7 @@ import (
 )
 
 var user *userClient
+var event *eventClient
 
 func main() {
 	var err error
@@ -22,6 +23,11 @@ func main() {
 	}
 	defer user.close()
 
+	event, err = newEventClient(cfg.eventAddress)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer event.close()
 
 	router := gin.Default()
 
@@ -29,7 +35,7 @@ func main() {
 	router.POST("/user/register", createUser)
 	router.GET("/user/:id", getUserById)
 	router.POST("/user/login", userLogin)
-	//
+	router.POST("/venue", createVenue)
 
 	addr := fmt.Sprintf(":%s", cfg.port)
 	err = router.Run(addr)
@@ -41,6 +47,7 @@ func main() {
 type config struct {
 	port string
 	userAddress string
+	eventAddress string
 }
 
 func loadEnv(path string) *config {
@@ -64,8 +71,19 @@ func loadEnv(path string) *config {
 	}
 	userAddress := userHost + ":" + userPort
 
+	eventHost := os.Getenv("EVENT_HOST")
+	if eventHost == "" {
+		eventHost = "localhost"
+	}
+	eventPort := os.Getenv("EVENT_PORT")
+	if eventPort == "" {
+		eventPort = "50052"
+	}
+	eventAddress := eventHost + ":" + eventPort
+
 	return &config{
 		port: port,
 		userAddress: userAddress,
+		eventAddress: eventAddress,
 	}
 }

@@ -44,3 +44,6 @@ event_seats table: (Junction table)
 - Create gRPC server and start listening for connections
 - Connect to database
 - Initialize db tables
+- Create query, grpc endpoint for venue creation
+- Create grpc client for event service in gateway
+- Create handler, rest endpoint for venue creation in gateway

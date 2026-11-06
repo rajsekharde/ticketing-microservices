@@ -2,9 +2,10 @@
 
 ## API endpoints
 - GET /health : Returns {"message": "API Gateway running"}
-- POST /user/register : Creates a new user
+- POST /user/register : Creates a new user. Body: {name, email, password, role}
 - GET /user/:id : Returns user data by ID
 - POST /user/login : User login
+- POST /venue : Create venue. Body: {name, address}
 
 ## Request flow
 Create User:

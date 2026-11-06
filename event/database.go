@@ -90,7 +90,7 @@ type venue struct {
 // Adds a new venue to venues table
 func (d *database) createVenueQuery(v *venue) error {
 	query := `
-	INSERT INTO venues (name, address) VALUES ($1 $2);
+	INSERT INTO venues (name, address) VALUES ($1, $2);
 	`
 
 	_, err := d.db.Exec(query, v.name, v.address)
