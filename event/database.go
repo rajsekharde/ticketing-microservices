@@ -82,3 +82,17 @@ func (d *database) initTables() error {
 	}
 	return nil
 }
+
+type venue struct {
+	name string
+	address string
+}
+// Adds a new venue to venues table
+func (d *database) createVenueQuery(v *venue) error {
+	query := `
+	INSERT INTO venues (name, address) VALUES ($1 $2);
+	`
+
+	_, err := d.db.Exec(query, v.name, v.address)
+	return err
+}

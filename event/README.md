@@ -40,3 +40,7 @@ event_seats table: (Junction table)
 - Design database schema
 - Determine scope of API for the service
 - Create proto file for the gRPC API
+- Generate go code from proto file
+- Create gRPC server and start listening for connections
+- Connect to database
+- Initialize db tables

@@ -14,13 +14,15 @@ type server struct {
 	eventpb.UnimplementedEventServiceServer
 }
 
+var db *database
 var cfg config
 
 func main() {
 	cfg = loadEnv(".env")
+	var err error
 
 	// connect to database
-	db, err := newDatabase(&cfg)
+	db, err = newDatabase(&cfg)
 	if err != nil {
 		log.Printf("Failed to connect to database: %v\n", err)
 	} else {
