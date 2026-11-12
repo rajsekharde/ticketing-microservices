@@ -84,3 +84,47 @@ func createEvent(c *gin.Context) {
 		"event_id": grpcResp.EventId,
 	})
 }
+
+type eventStruct struct {
+	Id int `json:"event_id"`
+	Name string `json:"event_name"`
+	VenueName string `json:"venue_name"`
+	VenueAddress string `json:"venue_address"`
+	StartTime time.Time `json:"start_time"`
+	DurationMinutes int `json:"duration_minutes"`
+	TicketPrice int `json:"ticket_price"`
+}
+func getEvents(c *gin.Context) {
+	grpcReq := eventpb.GetEventsRequest{}
+
+	grpcResp, err := event.getEvents(c.Request.Context(), &grpcReq)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "failed to fetch events",
+		})
+		return
+	}
+	if len(grpcResp.Events) == 0 {
+		c.JSON(http.StatusNotFound, gin.H{
+			"message": "no events found",
+		})
+		return
+	}
+
+	var events []eventStruct
+	for _, e := range grpcResp.Events {
+		ev := eventStruct{
+			Id: int(e.Id),
+			Name: e.Name,
+			VenueName: e.VenueName,
+			VenueAddress: e.VenueAddress,
+			StartTime: e.StartTime.AsTime(),
+			DurationMinutes: int(e.DurationMinutes),
+			TicketPrice: int(e.TicketPrice),
+		}
+
+		events = append(events, ev)
+	}
+
+	c.JSON(http.StatusOK, events)
+}

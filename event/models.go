@@ -9,9 +9,13 @@ type venue struct {
 }
 
 type event struct {
+	id int
 	name string
 	venueId int
 	startTime time.Time
 	durationMinutes int
 	ticketPrice int
+
+	venueName string
+	venueAddress string
 }

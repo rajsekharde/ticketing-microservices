@@ -29,7 +29,24 @@ message CreateEventResponse {
   int64 event_id = 1;
 }
 
+message Event {
+  int64 id = 1;
+  string name = 2;
+  string venue_name = 3;
+  string venue_address = 4;
+  google.protobuf.Timestamp start_time = 5;
+  int64 duration_minutes = 6;
+  int64 ticket_price = 7;
+}
+
+message GetEventsRequest {}
+
+message GetEventsResponse {
+  repeated Event events = 1;
+}
+
 service EventService {
   rpc CreateVenue (CreateVenueRequest) returns (CreateVenueResponse);
   rpc CreateEvent (CreateEventRequest) returns (CreateEventResponse);
+  rpc GetEvents (GetEventsRequest) returns (GetEventsResponse);
 }

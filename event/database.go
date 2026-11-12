@@ -65,14 +65,15 @@ func (d *database) initTables() error {
 		venue_id INT NOT NULL,
 		name VARCHAR(100) NOT NULL,
 		start_time TIMESTAMP NOT NULL,
-		duration_minutes INT NOT NULL
+		duration_minutes INT NOT NULL,
+		ticket_price INT NOT NULL
 		)`,
 		`CREATE TABLE IF NOT EXISTS event_seats (
 		id SERIAL PRIMARY KEY,
 		event_id INT NOT NULL,
 		seat_id INT NOT NULL,
 		status VARCHAR(20) DEFAULT 'AVAILABLE',
-		price INT NOT NULL
+		ticket_price INT NOT NULL
 		)`,
 	}
 
@@ -130,10 +131,12 @@ func (d *database) createEventWithSeatsQuery(e *event) (int, error) {
 	SELECT id FROM seats WHERE venue_id = $1;
 	`
 	eventQuery := `
-	INSERT INTO events (name, venue_id, start_time, duration_minutes) VALUES ($1, $2, $3, $4) returning id;
+	INSERT INTO events
+	(name, venue_id, start_time, duration_minutes, ticket_price)
+	VALUES ($1, $2, $3, $4, $5) returning id;
 	`
 	eventSeatQuery := `
-	INSERT INTO event_seats (event_id, seat_id, price) VALUES ($1, $2, $3);
+	INSERT INTO event_seats (event_id, seat_id, ticket_price) VALUES ($1, $2, $3);
 	`
 
 	// get all seats for the venue_id
@@ -165,7 +168,7 @@ func (d *database) createEventWithSeatsQuery(e *event) (int, error) {
 	defer tx.Rollback()
 
 	// create the event
-	err = tx.QueryRow(eventQuery, e.name, e.venueId, e.startTime, e.durationMinutes).Scan(&eventId)
+	err = tx.QueryRow(eventQuery, e.name, e.venueId, e.startTime, e.durationMinutes, e.ticketPrice).Scan(&eventId)
 	if err != nil {
 		return eventId, err
 	}
@@ -179,4 +182,41 @@ func (d *database) createEventWithSeatsQuery(e *event) (int, error) {
 	}
 
 	return eventId, tx.Commit()
+}
+
+// Returns details of all events
+func (d *database) getEventsQuery() ([]event, error) {
+	var events []event
+
+	eventsQuery := `
+	SELECT
+	e.id, e.name, v.name, v.address, e.start_time, e.duration_minutes, e.ticket_price
+	FROM events AS e
+	INNER JOIN venues AS v
+	ON e.venue_id = v.id;
+	`
+
+	rows, err := d.db.Query(eventsQuery)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var e event
+		err := rows.Scan(
+			&e.id,
+			&e.name,
+			&e.venueName,
+			&e.venueAddress,
+			&e.startTime,
+			&e.durationMinutes,
+			&e.ticketPrice)
+		if err != nil {
+			return nil, err
+		}
+		events = append(events, e)
+	}
+
+	return events, nil
 }

@@ -43,3 +43,9 @@ func (c *eventClient) createEvent(ctx context.Context, req *eventpb.CreateEventR
 	defer cancel()
 	return c.stub.CreateEvent(ctx, req)
 }
+
+func (c *eventClient) getEvents(ctx context.Context, req *eventpb.GetEventsRequest) (*eventpb.GetEventsResponse, error) {
+	ctx, cancel := context.WithTimeout(ctx, 2*time.Second)
+	defer cancel()
+	return c.stub.GetEvents(ctx, req)
+}

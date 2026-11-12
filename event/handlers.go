@@ -7,6 +7,7 @@ import (
 	eventpb "github.com/rajsekharde/ticketing-microservices/proto/event"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 func (s *server) CreateVenue(ctx context.Context, req *eventpb.CreateVenueRequest) (*eventpb.CreateVenueResponse, error) {
@@ -41,9 +42,35 @@ func (s *server) CreateEvent(ctx context.Context, req *eventpb.CreateEventReques
 		if err.Error() == "venue not found" {
 			return nil, status.Errorf(codes.NotFound, "invalid venue id")
 		}
-		return nil, status.Errorf(codes.Internal, "could not create event")
+		return nil, status.Errorf(codes.Internal, "failed to create event")
 	}
 	
 	log.Printf("Create Event: name = %v\n", req.Name)
 	return &eventpb.CreateEventResponse{EventId: int64(eventId)}, nil
+}
+
+func (s *server) GetEvents(ctx context.Context, req *eventpb.GetEventsRequest) (*eventpb.GetEventsResponse, error) {
+	events, err := db.getEventsQuery()
+	if err != nil {
+		log.Println("[FAILED] Get Events")
+		return nil, status.Errorf(codes.Internal, "failed to retrieve events")
+	}
+
+	var grpcEvents []*eventpb.Event
+	for _, e := range events {
+		ev := &eventpb.Event{
+			Id: int64(e.id),
+			Name: e.name,
+			VenueName: e.venueName,
+			VenueAddress: e.venueAddress,
+			StartTime: timestamppb.New(e.startTime),
+			DurationMinutes: int64(e.durationMinutes),
+			TicketPrice: int64(e.ticketPrice),
+		}
+
+		grpcEvents = append(grpcEvents, ev)
+	}
+	
+	log.Println("Get Events")
+	return &eventpb.GetEventsResponse{Events: grpcEvents}, nil
 }

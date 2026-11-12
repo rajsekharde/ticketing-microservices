@@ -9,6 +9,7 @@
 - Get event info
 - Get seat info for an event
 - Update event_seats
+- Get all event info
 
 ## Database schema
 
@@ -29,6 +30,7 @@ events table:
 - venue_id
 - start_time
 - duration
+- ticket_price
 
 event_seats table: (Junction table)
 - id
@@ -48,3 +50,11 @@ event_seats table: (Junction table)
 - Create query, grpc endpoint for venue creation
 - Create grpc client for event service in gateway
 - Create handler, rest endpoint for venue creation in gateway
+- For adding a new operation, like get all events:
+    - create request, response messages, rpc function in proto file
+    - generate code from proto file
+    - create DB SQL query
+    - create gRPC endpoint in server, call query function
+    - create gRPC function in client, call rpc function
+    - create REST endpoint, call gRPC function
+    - expose REST endpoint
