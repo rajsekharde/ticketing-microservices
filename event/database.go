@@ -84,34 +84,33 @@ func (d *database) initTables() error {
 	return nil
 }
 
-// Adds a new venue to venues table
-func (d *database) createVenueQuery(v *venue) error {
-	query := `
-	INSERT INTO venues (name, address) VALUES ($1, $2);
+// Adds a new venue to venues table.
+// Also adds seats for the venue in seats table with serial seat numbers
+func (d *database) createVenueWithSeatsQuery(v *venue) error {
+	venueQuery := `
+	INSERT INTO venues (name, address) VALUES ($1, $2) RETURNING id;
+	`
+	seatQuery := `
+	INSERT INTO seats (venue_id, seat_number) VALUES ($1, $2);
 	`
 
-	_, err := d.db.Exec(query, v.name, v.address)
-	return err
-}
-
-// Creates new seats in seats table using venue name and capacity
-func (d * database) createSeatsQuery(v *venue) error {
-	queries := []string {
-		`SELECT id FROM venues WHERE name = $1 AND address = $2;`,
-		`INSERT INTO seats (venue_id, seat_number) VALUES ($1, $2);`,
+	tx, err := d.db.Begin()
+	if err != nil {
+		return err
 	}
 
-	var id int
-	err := d.db.QueryRow(queries[0], v.name, v.address).Scan(&id)
+	var venueId int
+	err = tx.QueryRow(venueQuery, v.name, v.address).Scan(&venueId)
 	if err != nil {
 		return err
 	}
 
 	for i := range v.capacity {
-		_, err := d.db.Exec(queries[1], id, strconv.Itoa(i+1))
+		_, err := tx.Exec(seatQuery, venueId, strconv.Itoa(i+1))
 		if err != nil {
 			return err
 		}
 	}
-	return nil
+
+	return tx.Commit()
 }
