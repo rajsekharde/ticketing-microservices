@@ -32,9 +32,10 @@ func (s *server) CreateEvent(ctx context.Context, req *eventpb.CreateEventReques
 		venueId: int(req.VenueId),
 		startTime: req.StartTime.AsTime(),
 		durationMinutes: int(req.DurationMinutes),
+		ticketPrice: int(req.TicketPrice),
 	}
 
-	eventId, err := db.createEventQuery(e)
+	eventId, err := db.createEventWithSeatsQuery(e)
 	if err != nil {
 		log.Printf("[FAILED] Create Event: name = %v, error: %v\n", req.Name, err)
 		if err.Error() == "venue not found" {

@@ -13,4 +13,5 @@ type event struct {
 	venueId int
 	startTime time.Time
 	durationMinutes int
+	ticketPrice int
 }

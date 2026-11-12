@@ -50,6 +50,7 @@ type createEventRequest struct {
 	VenueId int `json:"venue_id"`
 	StartTime time.Time `json:"start_time"`
 	DurationMinutes int `json:"duration_minutes"`
+	TicketPrice int `json:"ticket_price"`
 }
 func createEvent(c *gin.Context) {
 	var req createEventRequest
@@ -67,6 +68,7 @@ func createEvent(c *gin.Context) {
 		VenueId: int64(req.VenueId),
 		StartTime: timestamppb.New(req.StartTime),
 		DurationMinutes: int64(req.DurationMinutes),
+		TicketPrice: int64(req.TicketPrice),
 	}
 
 	grpcResp, err := event.createEvent(c.Request.Context(), &grpcReq)

@@ -133,6 +133,7 @@ type CreateEventRequest struct {
 	VenueId         int64                  `protobuf:"varint,2,opt,name=venue_id,json=venueId,proto3" json:"venue_id,omitempty"`
 	StartTime       *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=start_time,json=startTime,proto3" json:"start_time,omitempty"`
 	DurationMinutes int64                  `protobuf:"varint,4,opt,name=duration_minutes,json=durationMinutes,proto3" json:"duration_minutes,omitempty"`
+	TicketPrice     int64                  `protobuf:"varint,5,opt,name=ticket_price,json=ticketPrice,proto3" json:"ticket_price,omitempty"`
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -195,6 +196,13 @@ func (x *CreateEventRequest) GetDurationMinutes() int64 {
 	return 0
 }
 
+func (x *CreateEventRequest) GetTicketPrice() int64 {
+	if x != nil {
+		return x.TicketPrice
+	}
+	return 0
+}
+
 type CreateEventResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	EventId       int64                  `protobuf:"varint,1,opt,name=event_id,json=eventId,proto3" json:"event_id,omitempty"`
@@ -249,13 +257,14 @@ const file_proto_event_event_proto_rawDesc = "" +
 	"\aaddress\x18\x02 \x01(\tR\aaddress\x12\x1a\n" +
 	"\bcapacity\x18\x03 \x01(\x03R\bcapacity\"0\n" +
 	"\x13CreateVenueResponse\x12\x19\n" +
-	"\bvenue_id\x18\x01 \x01(\x03R\avenueId\"\xa9\x01\n" +
+	"\bvenue_id\x18\x01 \x01(\x03R\avenueId\"\xcc\x01\n" +
 	"\x12CreateEventRequest\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x19\n" +
 	"\bvenue_id\x18\x02 \x01(\x03R\avenueId\x129\n" +
 	"\n" +
 	"start_time\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\tstartTime\x12)\n" +
-	"\x10duration_minutes\x18\x04 \x01(\x03R\x0fdurationMinutes\"0\n" +
+	"\x10duration_minutes\x18\x04 \x01(\x03R\x0fdurationMinutes\x12!\n" +
+	"\fticket_price\x18\x05 \x01(\x03R\vticketPrice\"0\n" +
 	"\x13CreateEventResponse\x12\x19\n" +
 	"\bevent_id\x18\x01 \x01(\x03R\aeventId2\x9a\x01\n" +
 	"\fEventService\x12D\n" +

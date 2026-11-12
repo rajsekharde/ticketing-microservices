@@ -97,10 +97,13 @@ func (d *database) createVenueWithSeatsQuery(v *venue) (int, error) {
 
 	var venueId int
 
+	// start a transaction
 	tx, err := d.db.Begin()
 	if err != nil {
 		return venueId, err
 	}
+	// rollback the transaction if any error occurs
+	defer tx.Rollback()
 
 	err = tx.QueryRow(venueQuery, v.name, v.address, v.capacity).Scan(&venueId)
 	if err != nil {
@@ -114,33 +117,66 @@ func (d *database) createVenueWithSeatsQuery(v *venue) (int, error) {
 		}
 	}
 
+	// commit the transaction
 	return venueId, tx.Commit()
 }
 
-// Creates a new event in events table
-func (d *database) createEventQuery(e *event) (int, error) {
+// Creates a new event in events table.
+// Also maps the venue seats with the event and creates entries in event_seats table.
+func (d *database) createEventWithSeatsQuery(e *event) (int, error) {
 	var eventId int
-	var exists bool
 
 	venueQuery := `
-	SELECT EXISTS(SELECT 1 FROM venues WHERE id = $1);
+	SELECT id FROM seats WHERE venue_id = $1;
 	`
 	eventQuery := `
 	INSERT INTO events (name, venue_id, start_time, duration_minutes) VALUES ($1, $2, $3, $4) returning id;
 	`
+	eventSeatQuery := `
+	INSERT INTO event_seats (event_id, seat_id, price) VALUES ($1, $2, $3);
+	`
 
-	err := d.db.QueryRow(venueQuery, e.venueId).Scan(&exists)
+	// get all seats for the venue_id
+	rows, err := d.db.Query(venueQuery, e.venueId)
 	if err != nil {
 		return eventId, err
 	}
-	if !exists {
-		return eventId, fmt.Errorf("venue not found")
+	defer rows.Close()
+
+	// store all seat IDs in an array
+	var seatIDs []int
+	for rows.Next() {
+		var id int
+		err := rows.Scan(&id)
+		if err != nil {
+			return eventId, err
+		}
+		seatIDs = append(seatIDs, id)
+	}
+	// check for invalid venue / no seats
+	if len(seatIDs) == 0 {
+		return eventId, fmt.Errorf("venue_id %d has no seats configured", e.venueId)
 	}
 
-	err = d.db.QueryRow(eventQuery, e.name, e.venueId, e.startTime, e.durationMinutes).Scan(&eventId)
+	tx, err := d.db.Begin()
 	if err != nil {
 		return eventId, err
 	}
+	defer tx.Rollback()
 
-	return eventId, nil
+	// create the event
+	err = tx.QueryRow(eventQuery, e.name, e.venueId, e.startTime, e.durationMinutes).Scan(&eventId)
+	if err != nil {
+		return eventId, err
+	}
+	
+	// create the event seats
+	for _, id := range seatIDs {
+		_, err = tx.Exec(eventSeatQuery, eventId, id, e.ticketPrice)
+		if err != nil {
+			return eventId, err
+		}
+	}
+
+	return eventId, tx.Commit()
 }

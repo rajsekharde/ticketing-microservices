@@ -22,6 +22,7 @@ message CreateEventRequest {
   int64                     venue_id         = 2;
   google.protobuf.Timestamp start_time       = 3;
   int64                     duration_minutes = 4;
+  int64                     ticket_price     = 5;
 }
 
 message CreateEventResponse {
