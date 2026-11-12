@@ -37,3 +37,9 @@ func (c *eventClient) createVenue(ctx context.Context, req *eventpb.CreateVenueR
 	defer cancel()
 	return c.stub.CreateVenue(ctx, req)
 }
+
+func (c *eventClient) createEvent(ctx context.Context, req *eventpb.CreateEventRequest) (*eventpb.CreateEventResponse, error) {
+	ctx, cancel := context.WithTimeout(ctx, 2*time.Second)
+	defer cancel()
+	return c.stub.CreateEvent(ctx, req)
+}

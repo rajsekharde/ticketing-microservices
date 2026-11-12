@@ -36,6 +36,7 @@ func main() {
 	router.GET("/user/:id", getUserById)
 	router.POST("/user/login", userLogin)
 	router.POST("/venue", createVenue)
+	router.POST("/event", createEvent)
 
 	addr := fmt.Sprintf(":%s", cfg.port)
 	err = router.Run(addr)

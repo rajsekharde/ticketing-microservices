@@ -25,9 +25,9 @@ seats table:
 
 events table:
 - id
-- venue_id
 - name
-- time
+- venue_id
+- start_time
 - duration
 
 event_seats table: (Junction table)

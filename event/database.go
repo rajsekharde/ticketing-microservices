@@ -64,8 +64,8 @@ func (d *database) initTables() error {
 		id SERIAL PRIMARY KEY,
 		venue_id INT NOT NULL,
 		name VARCHAR(100) NOT NULL,
-		time TIMESTAMP NOT NULL,
-		duration INTERVAL
+		start_time TIMESTAMP NOT NULL,
+		duration_minutes INT NOT NULL
 		)`,
 		`CREATE TABLE IF NOT EXISTS event_seats (
 		id SERIAL PRIMARY KEY,
@@ -115,4 +115,32 @@ func (d *database) createVenueWithSeatsQuery(v *venue) (int, error) {
 	}
 
 	return venueId, tx.Commit()
+}
+
+// Creates a new event in events table
+func (d *database) createEventQuery(e *event) (int, error) {
+	var eventId int
+	var exists bool
+
+	venueQuery := `
+	SELECT EXISTS(SELECT 1 FROM venues WHERE id = $1);
+	`
+	eventQuery := `
+	INSERT INTO events (name, venue_id, start_time, duration_minutes) VALUES ($1, $2, $3, $4) returning id;
+	`
+
+	err := d.db.QueryRow(venueQuery, e.venueId).Scan(&exists)
+	if err != nil {
+		return eventId, err
+	}
+	if !exists {
+		return eventId, fmt.Errorf("venue not found")
+	}
+
+	err = d.db.QueryRow(eventQuery, e.name, e.venueId, e.startTime, e.durationMinutes).Scan(&eventId)
+	if err != nil {
+		return eventId, err
+	}
+
+	return eventId, nil
 }

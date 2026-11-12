@@ -2,9 +2,11 @@ package main
 
 import (
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	eventpb "github.com/rajsekharde/ticketing-microservices/proto/event"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 type createVenueRequest struct {
@@ -17,7 +19,7 @@ func createVenue(c *gin.Context) {
 
 	err := c.ShouldBindJSON(&req)
 	if err != nil {
-		c.JSON(http.StatusBadGateway, gin.H{
+		c.JSON(http.StatusBadRequest, gin.H{
 			"error": err.Error(),
 		})
 		return
@@ -40,5 +42,43 @@ func createVenue(c *gin.Context) {
 	c.JSON(http.StatusCreated, gin.H{
 		"status": "venue created",
 		"venue_id": grpcResp.VenueId,
+	})
+}
+
+type createEventRequest struct {
+	Name string `json:"name"`
+	VenueId int `json:"venue_id"`
+	StartTime time.Time `json:"start_time"`
+	DurationMinutes int `json:"duration_minutes"`
+}
+func createEvent(c *gin.Context) {
+	var req createEventRequest
+
+	err := c.ShouldBindJSON(&req)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	grpcReq := eventpb.CreateEventRequest{
+		Name: req.Name,
+		VenueId: int64(req.VenueId),
+		StartTime: timestamppb.New(req.StartTime),
+		DurationMinutes: int64(req.DurationMinutes),
+	}
+
+	grpcResp, err := event.createEvent(c.Request.Context(), &grpcReq)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "failed to create event",
+		})
+		return
+	}
+
+	c.JSON(http.StatusCreated, gin.H{
+		"status": "event created",
+		"event_id": grpcResp.EventId,
 	})
 }
