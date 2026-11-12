@@ -16,6 +16,7 @@ venues table:
 - id
 - name
 - address
+- capacity
 
 seats table:
 - id

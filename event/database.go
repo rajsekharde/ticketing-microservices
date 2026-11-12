@@ -52,7 +52,8 @@ func (d *database) initTables() error {
 		`CREATE TABLE IF NOT EXISTS venues (
 		id SERIAL PRIMARY KEY,
 		name VARCHAR(100) NOT NULL,
-		address VARCHAR(100) UNIQUE NOT NULL
+		address VARCHAR(100) UNIQUE NOT NULL,
+		capacity INT NOT NULL
 		);`,
 		`CREATE TABLE IF NOT EXISTS seats (
 		id SERIAL PRIMARY KEY,
@@ -86,31 +87,32 @@ func (d *database) initTables() error {
 
 // Adds a new venue to venues table.
 // Also adds seats for the venue in seats table with serial seat numbers
-func (d *database) createVenueWithSeatsQuery(v *venue) error {
+func (d *database) createVenueWithSeatsQuery(v *venue) (int, error) {
 	venueQuery := `
-	INSERT INTO venues (name, address) VALUES ($1, $2) RETURNING id;
+	INSERT INTO venues (name, address, capacity) VALUES ($1, $2, $3) RETURNING id;
 	`
 	seatQuery := `
 	INSERT INTO seats (venue_id, seat_number) VALUES ($1, $2);
 	`
 
+	var venueId int
+
 	tx, err := d.db.Begin()
 	if err != nil {
-		return err
+		return venueId, err
 	}
 
-	var venueId int
-	err = tx.QueryRow(venueQuery, v.name, v.address).Scan(&venueId)
+	err = tx.QueryRow(venueQuery, v.name, v.address, v.capacity).Scan(&venueId)
 	if err != nil {
-		return err
+		return venueId, err
 	}
 
 	for i := range v.capacity {
 		_, err := tx.Exec(seatQuery, venueId, strconv.Itoa(i+1))
 		if err != nil {
-			return err
+			return venueId, err
 		}
 	}
 
-	return tx.Commit()
+	return venueId, tx.Commit()
 }

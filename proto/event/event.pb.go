@@ -83,6 +83,7 @@ func (x *CreateVenueRequest) GetCapacity() int64 {
 
 type CreateVenueResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
+	VenueId       int64                  `protobuf:"varint,1,opt,name=venue_id,json=venueId,proto3" json:"venue_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -117,6 +118,13 @@ func (*CreateVenueResponse) Descriptor() ([]byte, []int) {
 	return file_proto_event_event_proto_rawDescGZIP(), []int{1}
 }
 
+func (x *CreateVenueResponse) GetVenueId() int64 {
+	if x != nil {
+		return x.VenueId
+	}
+	return 0
+}
+
 var File_proto_event_event_proto protoreflect.FileDescriptor
 
 const file_proto_event_event_proto_rawDesc = "" +
@@ -125,8 +133,9 @@ const file_proto_event_event_proto_rawDesc = "" +
 	"\x12CreateVenueRequest\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x18\n" +
 	"\aaddress\x18\x02 \x01(\tR\aaddress\x12\x1a\n" +
-	"\bcapacity\x18\x03 \x01(\x03R\bcapacity\"\x15\n" +
-	"\x13CreateVenueResponse2T\n" +
+	"\bcapacity\x18\x03 \x01(\x03R\bcapacity\"0\n" +
+	"\x13CreateVenueResponse\x12\x19\n" +
+	"\bvenue_id\x18\x01 \x01(\x03R\avenueId2T\n" +
 	"\fEventService\x12D\n" +
 	"\vCreateVenue\x12\x19.event.CreateVenueRequest\x1a\x1a.event.CreateVenueResponseBDZBgithub.com/rajsekharde/ticketing-microservices/proto/event;eventpbb\x06proto3"
 

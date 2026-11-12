@@ -29,7 +29,7 @@ func createVenue(c *gin.Context) {
 		Capacity: int64(req.Capacity),
 	}
 
-	_, err = event.createVenue(c.Request.Context(), &grpcReq)
+	grpcResp, err := event.createVenue(c.Request.Context(), &grpcReq)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": "failed to create venue",
@@ -37,5 +37,8 @@ func createVenue(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, gin.H{"status": "venue created"})
+	c.JSON(http.StatusCreated, gin.H{
+		"status": "venue created",
+		"venue_id": grpcResp.VenueId,
+	})
 }

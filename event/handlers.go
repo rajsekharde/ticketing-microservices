@@ -16,12 +16,12 @@ func (s *server) CreateVenue(ctx context.Context, req *eventpb.CreateVenueReques
 		capacity: int(req.Capacity),
 	}
 	
-	err := db.createVenueWithSeatsQuery(v)
+	venueId, err := db.createVenueWithSeatsQuery(v)
 	if err != nil {
 		log.Printf("[FAILED] Create Venue: name = %v, error: %v\n", req.Name, err)
 		return nil, status.Errorf(codes.Internal, "could not create venue")
 	}
 
 	log.Printf("Create Venue: name = %v\n", req.Name)
-	return &eventpb.CreateVenueResponse{}, nil
+	return &eventpb.CreateVenueResponse{VenueId: int64(venueId)}, nil
 }

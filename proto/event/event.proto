@@ -10,7 +10,9 @@ message CreateVenueRequest {
     int64 capacity = 3;
 }
 
-message CreateVenueResponse {}
+message CreateVenueResponse {
+    int64 venue_id = 1;
+}
 
 service EventService {
     rpc CreateVenue (CreateVenueRequest) returns (CreateVenueResponse);
