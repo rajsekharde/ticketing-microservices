@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"strconv"
 	"time"
 
 	_ "github.com/jackc/pgx/v5/stdlib"
@@ -51,7 +52,7 @@ func (d *database) initTables() error {
 		`CREATE TABLE IF NOT EXISTS venues (
 		id SERIAL PRIMARY KEY,
 		name VARCHAR(100) NOT NULL,
-		address VARCHAR(100) NOT NULL
+		address VARCHAR(100) UNIQUE NOT NULL
 		);`,
 		`CREATE TABLE IF NOT EXISTS seats (
 		id SERIAL PRIMARY KEY,
@@ -83,10 +84,6 @@ func (d *database) initTables() error {
 	return nil
 }
 
-type venue struct {
-	name string
-	address string
-}
 // Adds a new venue to venues table
 func (d *database) createVenueQuery(v *venue) error {
 	query := `
@@ -95,4 +92,26 @@ func (d *database) createVenueQuery(v *venue) error {
 
 	_, err := d.db.Exec(query, v.name, v.address)
 	return err
+}
+
+// Creates new seats in seats table using venue name and capacity
+func (d * database) createSeatsQuery(v *venue) error {
+	queries := []string {
+		`SELECT id FROM venues WHERE name = $1 AND address = $2;`,
+		`INSERT INTO seats (venue_id, seat_number) VALUES ($1, $2);`,
+	}
+
+	var id int
+	err := d.db.QueryRow(queries[0], v.name, v.address).Scan(&id)
+	if err != nil {
+		return err
+	}
+
+	for i := range v.capacity {
+		_, err := d.db.Exec(queries[1], id, strconv.Itoa(i+1))
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }

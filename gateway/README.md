@@ -5,7 +5,7 @@
 - POST /user/register : Creates a new user. Body: {name, email, password, role}
 - GET /user/:id : Returns user data by ID
 - POST /user/login : User login
-- POST /venue : Create venue. Body: {name, address}
+- POST /venue : Create venue. Body: {name, address, capacity}
 
 ## Request flow
 Create User:

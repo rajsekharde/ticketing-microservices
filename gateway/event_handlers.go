@@ -10,6 +10,7 @@ import (
 type createVenueRequest struct {
 	Name string `json:"name"`
 	Address string `json:"address"`
+	Capacity int `json:"capacity"`
 }
 func createVenue(c *gin.Context) {
 	var req createVenueRequest
@@ -25,6 +26,7 @@ func createVenue(c *gin.Context) {
 	grpcReq := eventpb.CreateVenueRequest{
 		Name: req.Name,
 		Address: req.Address,
+		Capacity: int64(req.Capacity),
 	}
 
 	_, err = event.createVenue(c.Request.Context(), &grpcReq)
