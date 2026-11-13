@@ -10,6 +10,7 @@
 - Get seat info for an event
 - Update event_seats
 - Get all event info
+- Get all seat info of an event
 
 ## Database schema
 
@@ -37,7 +38,7 @@ event_seats table: (Junction table)
 - event_id
 - seat_id
 - status
-- price
+- ticket_price
 
 ## Steps
 - Design database schema

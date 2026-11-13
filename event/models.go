@@ -19,3 +19,11 @@ type event struct {
 	venueName string
 	venueAddress string
 }
+
+type eventSeat struct {
+	id int
+	eventId int
+	seatId int
+	status string
+	price int
+}

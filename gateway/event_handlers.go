@@ -2,6 +2,7 @@ package main
 
 import (
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -98,7 +99,7 @@ func getEvents(c *gin.Context) {
 	grpcReq := eventpb.GetEventsRequest{}
 
 	grpcResp, err := event.getEvents(c.Request.Context(), &grpcReq)
-	if err != nil {
+	if err != nil || grpcResp == nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": "failed to fetch events",
 		})
@@ -127,4 +128,50 @@ func getEvents(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, events)
+}
+
+type eventSeatStruct struct {
+	Id int `json:"event_seat_id"`
+	EventId int `json:"event_id"`
+	SeatId int `json:"seat_id"`
+	Status string `json:"status"`
+	Price int `json:"price"`
+}
+func getEventSeats(c *gin.Context) {
+	eventIdParam := c.Param("id")
+	eventId, err := strconv.ParseInt(eventIdParam, 10, 64) // 64-bit decimal
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error":"Invalid event id. Must be a positive integer",
+		})
+		return
+	}
+
+	grpcReq := eventpb.GetEventSeatsRequest{EventId: eventId}
+
+	grpcResp, err := event.getEventSeats(c.Request.Context(), &grpcReq)
+	if err != nil || grpcResp == nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "failed to fetch event seats",
+		})
+	}
+	if len(grpcResp.Seats) == 0 {
+		c.JSON(http.StatusNotFound, gin.H{
+			"message":"event seats not found",
+		})
+	}
+
+	var seats []eventSeatStruct
+	for _, s := range grpcResp.Seats {
+		e := eventSeatStruct{
+			Id: int(s.Id),
+			EventId: int(s.EventId),
+			SeatId: int(s.SeatId),
+			Status: s.Status,
+			Price: int(s.Price),
+		}
+		seats = append(seats, e)
+	}
+
+	c.JSON(http.StatusOK, seats)
 }

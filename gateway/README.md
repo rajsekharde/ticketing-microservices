@@ -1,12 +1,12 @@
 # API Gateway service
 
 ## API endpoints
-- GET /health : Returns {"message": "API Gateway running"}
+- GET /health : Returns running status of all services
 - POST /user/register : Creates a new user. Body: {name, email, password, role}
 - GET /user/:id : Returns user data by ID
 - POST /user/login : User login
 - POST /venue : Create venue with seats. Body: {name, address, capacity}
-- POST /venue : Create event with seats. Body: {name, venue_id, start_time, duration_minutes, ticket_price}
+- POST /event : Create event with seats. Body: {name, venue_id, start_time, duration_minutes, ticket_price}
     - start_time: RFC 3339 format : "2026-11-12T19:30:00+05:30"
 - GET /events : Returns details of all events
 
@@ -21,3 +21,7 @@ user service accepts the request, and performs an SQL query in database for user
 gRPC status codes are returned by user service, according to errors
 Gateway processes the gRPC response, and sends an HTTP response to client accordingly
 ```
+
+## GET /health endpoint
+
+All the services expose a health/ping endpoint. The gateway sends request to all these endpoints, and returns all the running statuses with timestamps. Results for a certain interval are cached, like 10 seconds so repeated health checks don't overwhelm the application.

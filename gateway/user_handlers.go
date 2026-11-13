@@ -12,12 +12,6 @@ import (
 	"github.com/rajsekharde/ticketing-microservices/shared"
 )
 
-// Returns status of server
-func getHealth(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{
-		"status": "running",
-	})
-}
 
 // Returns user data
 func getUserById(c *gin.Context) {
@@ -25,7 +19,7 @@ func getUserById(c *gin.Context) {
 	idParam := c.Param("id")
 
 	// 2. Parse string ID to int64
-	userID, err := strconv.ParseInt(idParam, 10, 64)
+	userID, err := strconv.ParseInt(idParam, 10, 64)  // 64-bit decimal
 	if err != nil || userID <= 0 {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": "invalid user ID, must be a positive integer",

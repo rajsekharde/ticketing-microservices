@@ -74,3 +74,26 @@ func (s *server) GetEvents(ctx context.Context, req *eventpb.GetEventsRequest) (
 	log.Println("Get Events")
 	return &eventpb.GetEventsResponse{Events: grpcEvents}, nil
 }
+
+func (s *server) GetEventSeats(ctx context.Context, req *eventpb.GetEventSeatsRequest) (*eventpb.GetEventSeatsResponse, error) {
+	eventSeats, err := db.getEventSeatsQuery(int(req.EventId))
+	if err != nil {
+		log.Printf("[FAILED] Get event seats: event id = %v, error: %v\n", req.EventId, err)
+		return nil, status.Errorf(codes.Internal, "failed to retrieve event seats")
+	}
+
+	var grpcEventSeats []*eventpb.Seat
+	for _, e := range eventSeats {
+		s := &eventpb.Seat{
+			Id: int64(e.id),
+			EventId: int64(e.eventId),
+			SeatId: int64(e.seatId),
+			Status: e.status,
+			Price: int64(e.price),
+		}
+		grpcEventSeats = append(grpcEventSeats, s)
+	}
+
+	log.Printf("Get event seats: event id = %v\n", req.EventId)
+	return &eventpb.GetEventSeatsResponse{Seats: grpcEventSeats}, nil
+}

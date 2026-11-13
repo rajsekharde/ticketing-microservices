@@ -19,9 +19,10 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	EventService_CreateVenue_FullMethodName = "/event.EventService/CreateVenue"
-	EventService_CreateEvent_FullMethodName = "/event.EventService/CreateEvent"
-	EventService_GetEvents_FullMethodName   = "/event.EventService/GetEvents"
+	EventService_CreateVenue_FullMethodName   = "/event.EventService/CreateVenue"
+	EventService_CreateEvent_FullMethodName   = "/event.EventService/CreateEvent"
+	EventService_GetEvents_FullMethodName     = "/event.EventService/GetEvents"
+	EventService_GetEventSeats_FullMethodName = "/event.EventService/GetEventSeats"
 )
 
 // EventServiceClient is the client API for EventService service.
@@ -31,6 +32,7 @@ type EventServiceClient interface {
 	CreateVenue(ctx context.Context, in *CreateVenueRequest, opts ...grpc.CallOption) (*CreateVenueResponse, error)
 	CreateEvent(ctx context.Context, in *CreateEventRequest, opts ...grpc.CallOption) (*CreateEventResponse, error)
 	GetEvents(ctx context.Context, in *GetEventsRequest, opts ...grpc.CallOption) (*GetEventsResponse, error)
+	GetEventSeats(ctx context.Context, in *GetEventSeatsRequest, opts ...grpc.CallOption) (*GetEventSeatsResponse, error)
 }
 
 type eventServiceClient struct {
@@ -71,6 +73,16 @@ func (c *eventServiceClient) GetEvents(ctx context.Context, in *GetEventsRequest
 	return out, nil
 }
 
+func (c *eventServiceClient) GetEventSeats(ctx context.Context, in *GetEventSeatsRequest, opts ...grpc.CallOption) (*GetEventSeatsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetEventSeatsResponse)
+	err := c.cc.Invoke(ctx, EventService_GetEventSeats_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // EventServiceServer is the server API for EventService service.
 // All implementations must embed UnimplementedEventServiceServer
 // for forward compatibility.
@@ -78,6 +90,7 @@ type EventServiceServer interface {
 	CreateVenue(context.Context, *CreateVenueRequest) (*CreateVenueResponse, error)
 	CreateEvent(context.Context, *CreateEventRequest) (*CreateEventResponse, error)
 	GetEvents(context.Context, *GetEventsRequest) (*GetEventsResponse, error)
+	GetEventSeats(context.Context, *GetEventSeatsRequest) (*GetEventSeatsResponse, error)
 	mustEmbedUnimplementedEventServiceServer()
 }
 
@@ -96,6 +109,9 @@ func (UnimplementedEventServiceServer) CreateEvent(context.Context, *CreateEvent
 }
 func (UnimplementedEventServiceServer) GetEvents(context.Context, *GetEventsRequest) (*GetEventsResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetEvents not implemented")
+}
+func (UnimplementedEventServiceServer) GetEventSeats(context.Context, *GetEventSeatsRequest) (*GetEventSeatsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetEventSeats not implemented")
 }
 func (UnimplementedEventServiceServer) mustEmbedUnimplementedEventServiceServer() {}
 func (UnimplementedEventServiceServer) testEmbeddedByValue()                      {}
@@ -172,6 +188,24 @@ func _EventService_GetEvents_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
+func _EventService_GetEventSeats_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetEventSeatsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(EventServiceServer).GetEventSeats(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: EventService_GetEventSeats_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(EventServiceServer).GetEventSeats(ctx, req.(*GetEventSeatsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // EventService_ServiceDesc is the grpc.ServiceDesc for EventService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -190,6 +224,10 @@ var EventService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetEvents",
 			Handler:    _EventService_GetEvents_Handler,
+		},
+		{
+			MethodName: "GetEventSeats",
+			Handler:    _EventService_GetEventSeats_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

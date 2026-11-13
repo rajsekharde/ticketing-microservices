@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"net/http"
 	"os"
 
 	"github.com/gin-gonic/gin"
@@ -31,13 +32,14 @@ func main() {
 
 	router := gin.Default()
 
-	router.GET("/health", getHealth)
+	router.GET("/health", getHealthHandler)
 	router.POST("/user/register", createUser)
 	router.GET("/user/:id", getUserById)
 	router.POST("/user/login", userLogin)
 	router.POST("/venue", createVenue)
 	router.POST("/event", createEvent)
 	router.GET("/events", getEvents)
+	router.GET("/event/:id/seats", getEventSeats)
 
 	addr := fmt.Sprintf(":%s", cfg.port)
 	err = router.Run(addr)
@@ -88,4 +90,11 @@ func loadEnv(path string) *config {
 		userAddress: userAddress,
 		eventAddress: eventAddress,
 	}
+}
+
+// Returns running status of all services
+func getHealthHandler(c *gin.Context) {
+	c.JSON(http.StatusOK, gin.H{
+		"status": "running",
+	})
 }

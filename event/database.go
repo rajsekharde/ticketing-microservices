@@ -220,3 +220,36 @@ func (d *database) getEventsQuery() ([]event, error) {
 
 	return events, nil
 }
+
+// Returns all seats of an event
+func (d *database) getEventSeatsQuery(eventId int) ([]eventSeat, error) {
+	query := `
+	SELECT id, event_id, seat_id, status, ticket_price
+	FROM event_seats WHERE event_id = $1;
+	`
+
+	var eventSeats []eventSeat
+
+	rows, err := d.db.Query(query, eventId)
+	if err != nil {
+		return eventSeats, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var e eventSeat
+		err = rows.Scan(
+			&e.id,
+			&e.eventId,
+			&e.seatId,
+			&e.status,
+			&e.price,
+		)
+		if err != nil {
+			return eventSeats, err
+		}
+		eventSeats = append(eventSeats, e)
+	}
+
+	return eventSeats, nil
+}

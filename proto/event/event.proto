@@ -5,7 +5,7 @@ package event;
 option go_package = "github.com/rajsekharde/ticketing-microservices/proto/event;eventpb";
 
 import "google/protobuf/timestamp.proto";
-import "google/protobuf/duration.proto";
+// import "google/protobuf/duration.proto";
 
 message CreateVenueRequest {
   string name     = 1;
@@ -45,8 +45,24 @@ message GetEventsResponse {
   repeated Event events = 1;
 }
 
+message Seat {
+  int64 id = 1;
+  int64 event_id = 2;
+  int64 seat_id = 3;
+  string status = 4;
+  int64 price = 5;
+}
+message GetEventSeatsRequest {
+  int64 event_id = 1;
+}
+
+message GetEventSeatsResponse {
+  repeated Seat seats = 1;
+}
+
 service EventService {
   rpc CreateVenue (CreateVenueRequest) returns (CreateVenueResponse);
   rpc CreateEvent (CreateEventRequest) returns (CreateEventResponse);
   rpc GetEvents (GetEventsRequest) returns (GetEventsResponse);
+  rpc GetEventSeats (GetEventSeatsRequest) returns (GetEventSeatsResponse);
 }
