@@ -2,13 +2,14 @@
 
 ## API endpoints
 - GET /health : Returns running status of all services
-- POST /user/register : Creates a new user. Body: {name, email, password, role}
-- GET /user/:id : Returns user data by ID
-- POST /user/login : User login
-- POST /venue : Create venue with seats. Body: {name, address, capacity}
-- POST /event : Create event with seats. Body: {name, venue_id, start_time, duration_minutes, ticket_price}
+- POST /users/register : Creates a new user. Body: {name, email, password, role}
+- GET /users/:id : Returns user data by ID
+- POST /users/login : User login
+- POST /venues : Create venue with seats. Body: {name, address, capacity}
+- POST /events : Create event with seats. Body: {name, venue_id, start_time, duration_minutes, ticket_price}
     - start_time: RFC 3339 format : "2026-11-12T19:30:00+05:30"
 - GET /events : Returns details of all events
+- GET /events/:id/seats : Returns details of all seats of an event
 
 ## Request flow
 Create User:
