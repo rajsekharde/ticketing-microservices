@@ -19,6 +19,7 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
+	EventService_GetHealth_FullMethodName     = "/event.EventService/GetHealth"
 	EventService_CreateVenue_FullMethodName   = "/event.EventService/CreateVenue"
 	EventService_CreateEvent_FullMethodName   = "/event.EventService/CreateEvent"
 	EventService_GetEvents_FullMethodName     = "/event.EventService/GetEvents"
@@ -29,6 +30,7 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type EventServiceClient interface {
+	GetHealth(ctx context.Context, in *GetHealthRequest, opts ...grpc.CallOption) (*GetHealthResponse, error)
 	CreateVenue(ctx context.Context, in *CreateVenueRequest, opts ...grpc.CallOption) (*CreateVenueResponse, error)
 	CreateEvent(ctx context.Context, in *CreateEventRequest, opts ...grpc.CallOption) (*CreateEventResponse, error)
 	GetEvents(ctx context.Context, in *GetEventsRequest, opts ...grpc.CallOption) (*GetEventsResponse, error)
@@ -41,6 +43,16 @@ type eventServiceClient struct {
 
 func NewEventServiceClient(cc grpc.ClientConnInterface) EventServiceClient {
 	return &eventServiceClient{cc}
+}
+
+func (c *eventServiceClient) GetHealth(ctx context.Context, in *GetHealthRequest, opts ...grpc.CallOption) (*GetHealthResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetHealthResponse)
+	err := c.cc.Invoke(ctx, EventService_GetHealth_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 func (c *eventServiceClient) CreateVenue(ctx context.Context, in *CreateVenueRequest, opts ...grpc.CallOption) (*CreateVenueResponse, error) {
@@ -87,6 +99,7 @@ func (c *eventServiceClient) GetEventSeats(ctx context.Context, in *GetEventSeat
 // All implementations must embed UnimplementedEventServiceServer
 // for forward compatibility.
 type EventServiceServer interface {
+	GetHealth(context.Context, *GetHealthRequest) (*GetHealthResponse, error)
 	CreateVenue(context.Context, *CreateVenueRequest) (*CreateVenueResponse, error)
 	CreateEvent(context.Context, *CreateEventRequest) (*CreateEventResponse, error)
 	GetEvents(context.Context, *GetEventsRequest) (*GetEventsResponse, error)
@@ -101,6 +114,9 @@ type EventServiceServer interface {
 // pointer dereference when methods are called.
 type UnimplementedEventServiceServer struct{}
 
+func (UnimplementedEventServiceServer) GetHealth(context.Context, *GetHealthRequest) (*GetHealthResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetHealth not implemented")
+}
 func (UnimplementedEventServiceServer) CreateVenue(context.Context, *CreateVenueRequest) (*CreateVenueResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method CreateVenue not implemented")
 }
@@ -132,6 +148,24 @@ func RegisterEventServiceServer(s grpc.ServiceRegistrar, srv EventServiceServer)
 		t.testEmbeddedByValue()
 	}
 	s.RegisterService(&EventService_ServiceDesc, srv)
+}
+
+func _EventService_GetHealth_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetHealthRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(EventServiceServer).GetHealth(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: EventService_GetHealth_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(EventServiceServer).GetHealth(ctx, req.(*GetHealthRequest))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _EventService_CreateVenue_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -213,6 +247,10 @@ var EventService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "event.EventService",
 	HandlerType: (*EventServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "GetHealth",
+			Handler:    _EventService_GetHealth_Handler,
+		},
 		{
 			MethodName: "CreateVenue",
 			Handler:    _EventService_CreateVenue_Handler,

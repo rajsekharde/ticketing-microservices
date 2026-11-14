@@ -7,6 +7,14 @@ option go_package = "github.com/rajsekharde/ticketing-microservices/proto/event;
 import "google/protobuf/timestamp.proto";
 // import "google/protobuf/duration.proto";
 
+message GetHealthRequest {}
+
+message GetHealthResponse {
+  string status = 1;
+  string db_status = 2;
+  string msg = 3;
+}
+
 message CreateVenueRequest {
   string name     = 1;
   string address  = 2;
@@ -61,6 +69,7 @@ message GetEventSeatsResponse {
 }
 
 service EventService {
+  rpc GetHealth (GetHealthRequest) returns (GetHealthResponse);
   rpc CreateVenue (CreateVenueRequest) returns (CreateVenueResponse);
   rpc CreateEvent (CreateEventRequest) returns (CreateEventResponse);
   rpc GetEvents (GetEventsRequest) returns (GetEventsResponse);

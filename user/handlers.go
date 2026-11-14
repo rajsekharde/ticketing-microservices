@@ -12,6 +12,24 @@ import (
 	"google.golang.org/grpc/status"
 )
 
+func (s *server) GetHealth(ctx context.Context, req *userpb.GetHealthRequest) (*userpb.GetHealthResponse, error) {
+	status := "UP"
+	dbStatus := "CONNECTED"
+	msg := ""
+
+	err := db.db.Ping()
+	if err != nil {
+		dbStatus = "DISCONNECTED"
+		msg = err.Error()
+	}
+
+	return &userpb.GetHealthResponse{
+		Status: status,
+		DbStatus: dbStatus,
+		Msg: msg,
+	}, nil
+}
+
 func (s *server) GetUser(ctx context.Context, req *userpb.GetUserRequest) (*userpb.User, error) {
 	user, err := db.getUserQuery(int(req.Id))
 	if err != nil {

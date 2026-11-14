@@ -5,6 +5,14 @@ package user;
 // Package directory for storing generated code. userpb = package alias
 option go_package = "github.com/rajsekharde/ticketing-microservices/proto/user;userpb";
 
+message GetHealthRequest {}
+
+message GetHealthResponse {
+  string status = 1;
+  string db_status = 2;
+  string msg = 3;
+}
+
 // Generated code contanins UserRole prefix for all enum values
 enum UserRole {
   UNSPECIFIED = 0;
@@ -52,6 +60,7 @@ message UserLoginResponse {
 // Services
 
 service UserService {
+  rpc GetHealth (GetHealthRequest) returns (GetHealthResponse);
   rpc GetUser (GetUserRequest) returns (User);
   rpc CreateUser (CreateUserRequest) returns (CreateUserResponse);
   rpc UserLogin (UserLoginRequest) returns (UserLoginResponse);

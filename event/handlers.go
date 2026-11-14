@@ -10,6 +10,24 @@ import (
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
+func (s *server) GetHealth(ctx context.Context, req *eventpb.GetHealthRequest) (*eventpb.GetHealthResponse, error) {
+	status := "UP"
+	dbStatus := "CONNECTED"
+	msg := ""
+
+	err := db.db.Ping()
+	if err != nil {
+		dbStatus = "DISCONNECTED"
+		msg = err.Error()
+	}
+
+	return &eventpb.GetHealthResponse{
+		Status: status,
+		DbStatus: dbStatus,
+		Msg: msg,
+	}, nil
+}
+
 func (s *server) CreateVenue(ctx context.Context, req *eventpb.CreateVenueRequest) (*eventpb.CreateVenueResponse, error) {
 	v := &venue{
 		name: req.Name,
