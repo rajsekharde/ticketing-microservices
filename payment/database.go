@@ -1,0 +1,46 @@
+package main
+
+import (
+	"context"
+	"database/sql"
+	"fmt"
+	"time"
+
+	_ "github.com/jackc/pgx/v5/stdlib"
+)
+
+type database struct {
+	url string
+	db *sql.DB
+}
+
+// Creates a new database connection. Uses values from config struct to create DB URL
+func newDatabase(cfg *config) (*database, error) {
+	// Connection string format: postgres://username:password@host:port/dbname?sslmode=disable
+	url := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=disable",
+	cfg.db_user, cfg.db_password, cfg.db_host, cfg.db_port, cfg.db_name)
+
+	// intialize datatbase handle, registers configuration, driver, and connection string
+	db, err := sql.Open("pgx", url)
+	if err != nil {
+		return nil, err
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	// tests the network connection and credentials
+	if err := db.PingContext(ctx); err != nil {
+		return nil, fmt.Errorf("database unreachable: %w", err)
+	}
+
+	return &database{
+		url: url,
+		db: db,
+	}, nil
+}
+
+// Closes the DB connection
+func (d *database) close() {
+	d.db.Close()
+}

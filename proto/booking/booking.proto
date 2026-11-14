@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package booking;
+
+option go_package = "github.com/rajsekharde/ticketing-microservices/proto/booking;bookingpb";
+
+message GetHealthRequest {}
+
+message GetHealthResponse {
+  string status = 1;
+  string db_status = 2;
+  string msg = 3;
+}
+
+service BookingService {
+  rpc GetHealth (GetHealthRequest) returns (GetHealthResponse);
+}

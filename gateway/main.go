@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"net/http"
@@ -9,12 +10,18 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
+	bookingpb "github.com/rajsekharde/ticketing-microservices/proto/booking"
 	eventpb "github.com/rajsekharde/ticketing-microservices/proto/event"
+	notifpb "github.com/rajsekharde/ticketing-microservices/proto/notification"
+	paymentpb "github.com/rajsekharde/ticketing-microservices/proto/payment"
 	userpb "github.com/rajsekharde/ticketing-microservices/proto/user"
 )
 
 var user *userClient
 var event *eventClient
+var booking *bookingClient
+var payment *paymentClient
+var notification *notificationClient
 
 func main() {
 	var err error
@@ -32,6 +39,24 @@ func main() {
 		log.Fatal(err)
 	}
 	defer event.close()
+
+	booking, err = newBookingClient(cfg.bookingAddress)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer booking.close()
+
+	payment, err = newPaymentClient(cfg.paymentAddress)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer payment.close()
+
+	notification, err = newNotificationClient(cfg.notificationAddress)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer notification.close()
 
 	router := gin.Default()
 
@@ -52,9 +77,12 @@ func main() {
 }
 
 type config struct {
-	port         string
-	userAddress  string
-	eventAddress string
+	port                string
+	userAddress         string
+	eventAddress        string
+	bookingAddress      string
+	paymentAddress      string
+	notificationAddress string
 }
 
 func loadEnv(path string) *config {
@@ -63,11 +91,13 @@ func loadEnv(path string) *config {
 		log.Println("Failed to load env file. Using environment variables.")
 	}
 
+	// Gateway
 	port := os.Getenv("GATEWAY_PORT")
 	if port == "" {
 		port = "8000"
 	}
 
+	// User
 	userHost := os.Getenv("USER_HOST")
 	if userHost == "" {
 		userHost = "localhost"
@@ -78,6 +108,7 @@ func loadEnv(path string) *config {
 	}
 	userAddress := userHost + ":" + userPort
 
+	// Event
 	eventHost := os.Getenv("EVENT_HOST")
 	if eventHost == "" {
 		eventHost = "localhost"
@@ -88,10 +119,46 @@ func loadEnv(path string) *config {
 	}
 	eventAddress := eventHost + ":" + eventPort
 
+	// Booking
+	bookingHost := os.Getenv("BOOKING_HOST")
+	if bookingHost == "" {
+		bookingHost = "localhost"
+	}
+	bookingPort := os.Getenv("BOOKING_PORT")
+	if bookingPort == "" {
+		bookingPort = "50053"
+	}
+	bookingAddress := bookingHost + ":" + bookingPort
+
+	// Payment
+	paymentHost := os.Getenv("PAYMENT_HOST")
+	if paymentHost == "" {
+		paymentHost = "localhost"
+	}
+	paymentPort := os.Getenv("PAYMENT_PORT")
+	if paymentPort == "" {
+		paymentPort = "50054"
+	}
+	paymentAddress := paymentHost + ":" + paymentPort
+
+	// Notification
+	notificationtHost := os.Getenv("NOTIFICATION_HOST")
+	if notificationtHost == "" {
+		notificationtHost = "localhost"
+	}
+	notificationPort := os.Getenv("NOTIFICATION_PORT")
+	if notificationPort == "" {
+		notificationPort = "50055"
+	}
+	notificationAddress := notificationtHost + ":" + notificationPort
+
 	return &config{
-		port:         port,
-		userAddress:  userAddress,
-		eventAddress: eventAddress,
+		port:                port,
+		userAddress:         userAddress,
+		eventAddress:        eventAddress,
+		bookingAddress:      bookingAddress,
+		paymentAddress:      paymentAddress,
+		notificationAddress: notificationAddress,
 	}
 }
 
@@ -111,49 +178,71 @@ type healthStruct struct {
 // Returns running status of all services
 func getHealthHandler(c *gin.Context) {
 	var health []serviceHealth
-	var userHealth, eventHealth serviceHealth
 
-	start := time.Now()
-	r1, err := user.stub.GetHealth(c.Request.Context(), &userpb.GetHealthRequest{})
-	if err != nil || r1 == nil {
-		userHealth = serviceHealth{
-			Name:      "user",
-			Status:    "DOWN",
-			DbStatus:  "DISCONNECTED",
-			Msg:       err.Error(),
-			LatencyMs: float32(time.Since(start).Milliseconds()),
-		}
-	} else {
-		userHealth = serviceHealth{
-			Name:      "user",
-			Status:    r1.Status,
-			DbStatus:  r1.DbStatus,
-			Msg:       r1.Msg,
-			LatencyMs: float32(time.Since(start).Milliseconds()),
-		}
+	healthChecks := []struct{
+		name string
+		checkFn func(ctx context.Context) (string, string, string, error)
+		}{
+		{"user", func(ctx context.Context) (string, string, string, error) {
+			resp, err := user.stub.GetHealth(c.Request.Context(), &userpb.GetHealthRequest{})
+			if err != nil || resp == nil {
+				return "", "", "", err
+			}
+			return resp.Status, resp.DbStatus, resp.Msg, nil
+		}},
+		{"event", func(ctx context.Context) (string, string, string, error) {
+			resp, err := event.stub.GetHealth(c.Request.Context(), &eventpb.GetHealthRequest{})
+			if err != nil || resp == nil {
+				return "", "", "", err
+			}
+			return resp.Status, resp.DbStatus, resp.Msg, nil
+		}},
+		{"booking", func(ctx context.Context) (string, string, string, error) {
+			resp, err := booking.stub.GetHealth(c.Request.Context(), &bookingpb.GetHealthRequest{})
+			if err != nil || resp == nil {
+				return "", "", "", err
+			}
+			return resp.Status, resp.DbStatus, resp.Msg, nil
+		}},
+		{"payment", func(ctx context.Context) (string, string, string, error) {
+			resp, err := payment.stub.GetHealth(c.Request.Context(), &paymentpb.GetHealthRequest{})
+			if err != nil || resp == nil {
+				return "", "", "", err
+			}
+			return resp.Status, resp.DbStatus, resp.Msg, nil
+		}},
+		{"notification", func(ctx context.Context) (string, string, string, error) {
+			resp, err := notification.stub.GetHealth(c.Request.Context(), &notifpb.GetHealthRequest{})
+			if err != nil || resp == nil {
+				return "", "", "", err
+			}
+			return resp.Status, resp.DbStatus, resp.Msg, nil
+		}},
 	}
-	health = append(health, userHealth)
 
-	start = time.Now()
-	r2, err := event.stub.GetHealth(c.Request.Context(), &eventpb.GetHealthRequest{})
-	if err != nil || r2 == nil {
-		eventHealth = serviceHealth{
-			Name:      "event",
-			Status:    "DOWN",
-			DbStatus:  "DISCONNECTED",
-			Msg:       err.Error(),
-			LatencyMs: float32(time.Since(start).Milliseconds()),
+	for _, service := range healthChecks {
+		currHealth := serviceHealth{}
+		start := time.Now()
+		status, dbStatus, msg, err := service.checkFn(c.Request.Context())
+		if err != nil {
+			currHealth = serviceHealth{
+				Name:      service.name,
+				Status:    "DOWN",
+				DbStatus:  "DISCONNECTED",
+				Msg:       err.Error(),
+				LatencyMs: float32(time.Since(start).Milliseconds()),
+			}
+		} else {
+			currHealth = serviceHealth{
+				Name:      service.name,
+				Status:    status,
+				DbStatus:  dbStatus,
+				Msg:       msg,
+				LatencyMs: float32(time.Since(start).Milliseconds()),
+			}
 		}
-	} else {
-		eventHealth = serviceHealth{
-			Name:      "event",
-			Status:    r2.Status,
-			DbStatus:  r2.DbStatus,
-			Msg:       r2.Msg,
-			LatencyMs: float32(time.Since(start).Milliseconds()),
-		}
+		health = append(health, currHealth)
 	}
-	health = append(health, eventHealth)
 
 	resp := healthStruct{
 		RecordedAt:    time.Now(),

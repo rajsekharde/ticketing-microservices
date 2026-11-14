@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package notification;
+
+option go_package = "github.com/rajsekharde/ticketing-microservices/proto/notification;notifpb";
+
+message GetHealthRequest {}
+
+message GetHealthResponse {
+  string status = 1;
+  string db_status = 2;
+  string msg = 3;
+}
+
+service NotificationService {
+  rpc GetHealth (GetHealthRequest) returns (GetHealthResponse);
+}

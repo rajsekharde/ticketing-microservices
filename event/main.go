@@ -47,7 +47,7 @@ func main() {
 	grpcServer := grpc.NewServer()
 	eventpb.RegisterEventServiceServer(grpcServer, &server{})
 
-	log.Printf("Event gRPC server listening on: %v\n", 50052)
+	log.Printf("Event gRPC server listening on: %v\n", cfg.port)
 	err = grpcServer.Serve(lis)
 	if err != nil {
 		log.Fatalf("Failed to serve: %v\n", err)
