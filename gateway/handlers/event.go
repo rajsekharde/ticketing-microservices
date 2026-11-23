@@ -18,6 +18,18 @@ type CreateVenueRequest struct {
 func CreateVenue(c *gin.Context) {
 	var req CreateVenueRequest
 
+	// check user role from claims
+	valRole, exists := c.Get("user_role")
+	userRole, ok := valRole.(string)
+	if !exists || !ok || userRole == "" {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
+		return
+	}
+	if userRole != "ADMIN" {
+		c.JSON(http.StatusForbidden, gin.H{"error": "forbidden"})
+		return
+	}
+
 	err := c.ShouldBindJSON(&req)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -55,6 +67,18 @@ type CreateEventRequest struct {
 }
 func CreateEvent(c *gin.Context) {
 	var req CreateEventRequest
+
+	// check user role from claims
+	valRole, exists := c.Get("user_role")
+	userRole, ok := valRole.(string)
+	if !exists || !ok || userRole == "" {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
+		return
+	}
+	if userRole != "ADMIN" {
+		c.JSON(http.StatusForbidden, gin.H{"error": "forbidden"})
+		return
+	}
 
 	err := c.ShouldBindJSON(&req)
 	if err != nil {
