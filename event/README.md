@@ -9,6 +9,7 @@
 - Get event info
 - Get seat info for an event
 - Update event_seats
+- Get all venue info
 - Get all event info
 - Get all seat info of an event
 
