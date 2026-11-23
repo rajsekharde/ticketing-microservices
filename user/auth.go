@@ -29,6 +29,8 @@ func generateAccessToken(userId string) (string, error) {
 	claims := &claims{
 		UserId: userId,
 		RegisteredClaims: jwt.RegisteredClaims{
+			Subject: userId,
+			Issuer: cfg.jwtIssuer,
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Duration(cfg.access_token_expiry_mins) * time.Minute)),
 			IssuedAt: jwt.NewNumericDate(time.Now()),
 		},

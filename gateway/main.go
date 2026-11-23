@@ -32,12 +32,17 @@ func main() {
 
 	router.GET("/health", getHealthHandler)
 	router.POST("/users/register", handlers.CreateUser)
-	router.GET("/users/:id", handlers.GetUserById)
 	router.POST("/users/login", handlers.UserLogin)
-	router.POST("/venues", handlers.CreateVenue)
-	router.POST("/events", handlers.CreateEvent)
 	router.GET("/events", handlers.GetEvents)
 	router.GET("/events/:id/seats", handlers.GetEventSeats)
+
+	protected := router.Group("/")
+	protected.Use(authMiddleware([]byte(cfg.jwtSecretKey), cfg.jwtIssuer))
+	{
+		protected.GET("/users/:id", handlers.GetUserById)
+		protected.POST("/venues", handlers.CreateVenue)
+		protected.POST("/events", handlers.CreateEvent)
+	}
 
 	addr := fmt.Sprintf(":%s", cfg.port)
 	err := router.Run(addr)
@@ -45,4 +50,3 @@ func main() {
 		log.Fatal(err)
 	}
 }
-

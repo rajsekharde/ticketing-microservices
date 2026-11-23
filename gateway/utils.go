@@ -67,6 +67,8 @@ type config struct {
 	bookingAddress      string
 	paymentAddress      string
 	notificationAddress string
+	jwtSecretKey string
+	jwtIssuer string
 }
 // Loads the contents of a .env file as environment variables
 func loadEnv(path string) *config {
@@ -91,6 +93,9 @@ func loadEnv(path string) *config {
 		userPort = "50051"
 	}
 	userAddress := userHost + ":" + userPort
+
+	jwtSecret := os.Getenv("JWT_SECRET_KEY")
+	jwtIssuer := os.Getenv("JWT_ISSUER")
 
 	// Event
 	eventHost := os.Getenv("EVENT_HOST")
@@ -143,6 +148,8 @@ func loadEnv(path string) *config {
 		bookingAddress:      bookingAddress,
 		paymentAddress:      paymentAddress,
 		notificationAddress: notificationAddress,
+		jwtSecretKey: jwtSecret,
+		jwtIssuer: jwtIssuer,
 	}
 }
 
@@ -167,7 +174,7 @@ func getHealthHandler(c *gin.Context) {
 		checkFn func(ctx context.Context) (string, string, string, error)
 	}{
 		{"user", func(ctx context.Context) (string, string, string, error) {
-			if user == nil || user == nil {
+			if user == nil || user.Stub == nil {
 				return "", "", "", fmt.Errorf("user client not initialized")
 			}
 			resp, err := user.Stub.GetHealth(c.Request.Context(), &userpb.GetHealthRequest{})

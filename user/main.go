@@ -4,6 +4,7 @@ import (
 	"log"
 	"net"
 	"os"
+	"strconv"
 
 	"github.com/joho/godotenv"
 	userpb "github.com/rajsekharde/ticketing-microservices/proto/user"
@@ -62,6 +63,7 @@ type config struct {
 	db_name string
 	jwt_secret_key string
 	access_token_expiry_mins int
+	jwtIssuer string
 }
 
 func loadEnv(path string) *config {
@@ -75,6 +77,11 @@ func loadEnv(path string) *config {
 		port = "50051"
 	}
 
+	mins, err := strconv.Atoi(os.Getenv("ACCESS_TOKEN_EXPIRY_MINS"))
+	if err != nil {
+		mins = 15
+	}
+
 	return &config{
 		port: port,
 		db_host: os.Getenv("POSTGRES_HOST"),
@@ -82,5 +89,8 @@ func loadEnv(path string) *config {
 		db_user: os.Getenv("POSTGRES_USER"),
 		db_password: os.Getenv("POSTGRES_PASSWORD"),
 		db_name: os.Getenv("USER_DB"),
+		jwt_secret_key: os.Getenv("JWT_SECRET_KEY"),
+		access_token_expiry_mins: mins,
+		jwtIssuer: os.Getenv("JWT_ISSUER"),
 	}
 }
