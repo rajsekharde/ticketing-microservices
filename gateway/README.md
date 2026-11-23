@@ -3,6 +3,7 @@
 ## API endpoints
 - GET /health : Returns running status of all services
 - POST /users/register : Creates a new user. Body: {name, email, password, role}
+    - Roles: ADMIN, CUSTOMER
 - GET /users/:id : Returns user data by ID
 - POST /users/login : User login. Body: {email, password}
 - POST /venues : Create venue with seats. Body: {name, address, capacity}

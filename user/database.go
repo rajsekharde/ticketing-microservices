@@ -68,14 +68,15 @@ type dbUser struct {
 	role string
 }
 
-func (d *database) createUserQuery(user *dbUser) error {
+func (d *database) createUserQuery(user *dbUser) (int, error) {
 	query := `
 	INSERT INTO users (email, password_hash, name, role) VALUES
-	($1, $2, $3, $4);
+	($1, $2, $3, $4) RETURNING id;
 	`
 
-	_, err := d.db.Exec(query, user.email, user.password_hash, user.name, user.role)
-	return err
+	var userId int
+	err := d.db.QueryRow(query, user.email, user.password_hash, user.name, user.role).Scan(&userId)
+	return userId, err
 }
 
 type user struct {
@@ -98,18 +99,19 @@ func (d *database) getUserQuery(id int) (*user, error) {
 	return &user, nil
 }
 
-// Returns the stored password hash for user with given email
-func (d *database) getPasswordQuery(email string) (int, string, error) {
+// Returns the stored password hash and role for user with given email
+func (d *database) getPasswordQuery(email string) (int, string, string, error) {
 	query := `
-	SELECT id, password_hash FROM users WHERE email = $1;
+	SELECT id, password_hash, role FROM users WHERE email = $1;
 	`
 
 	var id int
 	var hash string
-	err := d.db.QueryRow(query, email).Scan(&id, &hash)
+	var role string
+	err := d.db.QueryRow(query, email).Scan(&id, &hash, &role)
 	if err != nil {
-		return 0, "", err
+		return 0, "", "", err
 	}
 
-	return id, hash, nil;
+	return id, hash, role, nil;
 }

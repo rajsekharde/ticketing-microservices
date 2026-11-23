@@ -18,12 +18,32 @@ func GetUserById(c *gin.Context) {
 	// 1. Extract path parameter ":id"
 	idParam := c.Param("id")
 
+	// get the user id and role from claims
+	idVal, exists := c.Get("user_id")
+	idClaims, ok := idVal.(string)
+	if !exists || !ok || idClaims == "" {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
+		return
+	}
+	roleVal, exists := c.Get("user_role")
+	callerRole, ok := roleVal.(string)
+	if !exists || !ok || callerRole == "" {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
+		return
+	}
+
 	// 2. Parse string ID to int64
 	userID, err := strconv.ParseInt(idParam, 10, 64)  // 64-bit decimal
 	if err != nil || userID <= 0 {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": "invalid user ID, must be a positive integer",
 		})
+		return
+	}
+
+	// allow only admins to view other users' details
+	if idParam != idClaims && callerRole != "ADMIN" {
+		c.JSON(http.StatusForbidden, gin.H{"error": "forbidden"})
 		return
 	}
 
@@ -76,7 +96,7 @@ func CreateUser(c *gin.Context) {
 		grpcReq.Role = userpb.UserRole_UNSPECIFIED
 	}
 
-	_, err := cl.User.CreateUser(c.Request.Context(), &grpcReq)
+	grpcResp, err := cl.User.CreateUser(c.Request.Context(), &grpcReq)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to create user"})
 		return
@@ -84,6 +104,7 @@ func CreateUser(c *gin.Context) {
 
 	c.JSON(http.StatusCreated, gin.H{
 		"status":    "user created",
+		"user_id": grpcResp.Id,
 	})
 }
 

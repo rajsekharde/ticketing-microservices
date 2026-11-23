@@ -12,7 +12,7 @@ import (
 )
 
 type AuthClaims struct {
-	Role string `json:"role,omitempty"`
+	UserRole string `json:"user_role,omitempty"`
 	jwt.RegisteredClaims
 }
 
@@ -60,9 +60,15 @@ func authMiddleware (jwtSecret []byte, expectedIssuer string) gin.HandlerFunc {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "token missing subject"})
 			return
 		}
+		if claims.UserRole == "" {
+			log.Println("token missing role")
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "token missing role"})
+			return
+		}
 
-		// Store verified user ID in Gin request context.
-		// c.Set(userId, claims.Subject)
+		// Store verified user ID in Gin request context
+		c.Set("user_id", claims.Subject)
+		c.Set("user_role", claims.UserRole)
 		c.Next()
 	}
 }

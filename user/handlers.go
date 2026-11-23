@@ -65,7 +65,7 @@ func (s *server) CreateUser(ctx context.Context, req *userpb.CreateUserRequest) 
         return nil, status.Errorf(codes.Internal, "failed to hash password")
     }
 	
-	err = db.createUserQuery(&dbUser{
+	userId, err := db.createUserQuery(&dbUser{
         email: req.Email,
 		password_hash: hash,
         name:  req.Name,
@@ -78,11 +78,11 @@ func (s *server) CreateUser(ctx context.Context, req *userpb.CreateUserRequest) 
     }
 
     log.Printf("Create User: email = %v\n", req.Email)
-    return &userpb.CreateUserResponse{}, nil // No error field needed in response
+    return &userpb.CreateUserResponse{Id: int64(userId)}, nil // No error field needed in response
 }
 
 func (s *server) UserLogin(ctx context.Context, req *userpb.UserLoginRequest) (*userpb.UserLoginResponse, error) {
-	id, hash, err := db.getPasswordQuery(req.Email)
+	id, hash, role, err := db.getPasswordQuery(req.Email)
 	if err != nil {
 		log.Printf("[FAILED] Login User: email = %v, error: %v\n", req.Email, err.Error())
 		return nil, status.Errorf(codes.Internal, "failed to fetch password hash")
@@ -93,7 +93,7 @@ func (s *server) UserLogin(ctx context.Context, req *userpb.UserLoginRequest) (*
 		return nil, status.Errorf(codes.Unauthenticated, "password does not match stored hash")
 	}
 
-	jwt, err := generateAccessToken(strconv.Itoa(id))
+	jwt, err := generateAccessToken(strconv.Itoa(id), role)
 	if err != nil {
 		log.Printf("[FAILED] Login User: email = %v, error: %v\n", req.Email, err.Error())
 		return nil, status.Errorf(codes.Internal, "failed to generate access token")

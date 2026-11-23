@@ -21,13 +21,13 @@ func checkPasswordHash(password, hash string) bool {
 }
 
 type claims struct {
-	UserId string
+	UserRole string `json:"user_role,omitempty"`
 	jwt.RegisteredClaims
 }
 // Generates a new JWT with the user id and secret key
-func generateAccessToken(userId string) (string, error) {
+func generateAccessToken(userId string, userRole string) (string, error) {
 	claims := &claims{
-		UserId: userId,
+		UserRole: userRole,
 		RegisteredClaims: jwt.RegisteredClaims{
 			Subject: userId,
 			Issuer: cfg.jwtIssuer,

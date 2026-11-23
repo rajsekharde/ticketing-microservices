@@ -237,6 +237,7 @@ func (x *CreateUserRequest) GetRole() UserRole {
 
 type CreateUserResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -269,6 +270,13 @@ func (x *CreateUserResponse) ProtoReflect() protoreflect.Message {
 // Deprecated: Use CreateUserResponse.ProtoReflect.Descriptor instead.
 func (*CreateUserResponse) Descriptor() ([]byte, []int) {
 	return file_proto_user_user_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *CreateUserResponse) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
 }
 
 type User struct {
@@ -493,8 +501,9 @@ const file_proto_user_user_proto_rawDesc = "" +
 	"\x05email\x18\x01 \x01(\tR\x05email\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x1a\n" +
 	"\bpassword\x18\x03 \x01(\tR\bpassword\x12\"\n" +
-	"\x04role\x18\x04 \x01(\x0e2\x0e.user.UserRoleR\x04role\"\x14\n" +
-	"\x12CreateUserResponse\"d\n" +
+	"\x04role\x18\x04 \x01(\x0e2\x0e.user.UserRoleR\x04role\"$\n" +
+	"\x12CreateUserResponse\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"d\n" +
 	"\x04User\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x14\n" +
 	"\x05email\x18\x02 \x01(\tR\x05email\x12\x12\n" +

@@ -30,7 +30,7 @@ message CreateUserRequest {
 }
 
 message CreateUserResponse {
-  //
+  int64 id = 1;
 }
 
 // Get user details
