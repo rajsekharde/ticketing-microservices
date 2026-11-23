@@ -1,14 +1,39 @@
 services:
+  
+  gateway:
+    container_name: ticketing-microservices-gateway
+    build:
+      context: .
+      dockerfile: gateway/Dockerfile
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env.docker
+  
+  user:
+    container_name: ticketing-microservices-user
+    build:
+      context: .
+      dockerfile: user/Dockerfile
+    env_file:
+      - .env.docker
+    depends_on:
+      postgres:
+        condition: service_healthy
+  
   postgres:
-    container_name: ticketing_microservices_postgres
+    container_name: ticketing-microservices-postgres
     image: postgres:15-alpine
     env_file:
-      - .env
-    ports:
-      - "5433:5432"
+      - .env.docker
     volumes:
       # Postgres automatically runs all .sql, .sh scripts in this location on start up
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U root -d user_db"]
+      interval: 3s
+      timeout: 3s
+      retries: 10
 
 # Run: docker compose up -d
 # Stop: docker compose down -v  (Removes all containers & volumes)

@@ -36,6 +36,25 @@ make run-gateway
 docker compose down -v
 ```
 
+## Build and run application using Docker Compose
+
+Create an env file named .env.docker, having the service names as host names
+
+Run
+```bash
+docker compose up --build -d
+```
+
+Check stdout logs of a service
+```bash
+docker compose logs gateway
+```
+
+Shut down the application and remove containers
+```bash
+docker compose down --volumes --remove-orphans
+```
+
 ## Services
 
 ### User
