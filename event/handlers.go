@@ -115,3 +115,25 @@ func (s *server) GetEventSeats(ctx context.Context, req *eventpb.GetEventSeatsRe
 	log.Printf("Get event seats: event id = %v\n", req.EventId)
 	return &eventpb.GetEventSeatsResponse{Seats: grpcEventSeats}, nil
 }
+
+func (s *server) GetVenues(ctx context.Context, req *eventpb.GetVenuesRequest) (*eventpb.GetVenuesResponse, error) {
+	venues, err := db.getVenuesQuery()
+	if err != nil {
+		log.Printf("[FAILED] Get venues, error: %v\n", err)
+		return nil, status.Errorf(codes.Internal, "failed to retrieve venues")
+	}
+
+	var grpcVenues []*eventpb.Venue
+	for _, v := range venues {
+		vn := &eventpb.Venue{
+			Id: int64(v.id),
+			Name: v.name,
+			Address: v.address,
+			Capacity: int64(v.capacity),
+		}
+		grpcVenues = append(grpcVenues, vn)
+	}
+
+	log.Println("Get venues")
+	return &eventpb.GetVenuesResponse{Venues: grpcVenues}, nil
+}

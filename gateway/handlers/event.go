@@ -199,3 +199,38 @@ func GetEventSeats(c *gin.Context) {
 
 	c.JSON(http.StatusOK, seats)
 }
+
+type Venue struct {
+	Id int `json:"id"`
+	Name string `json:"name"`
+	Address string `json:"address"`
+	Capacity int `json:"capacity"`
+}
+func GetVenues(c *gin.Context) {
+	grpcReq := eventpb.GetVenuesRequest{}
+
+	grpcResp, err := cl.Event.GetVenues(c.Request.Context(), &grpcReq)
+	if err != nil || grpcResp == nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "failed to fetch venues",
+		})
+	}
+	if len(grpcResp.Venues) == 0 {
+		c.JSON(http.StatusNotFound, gin.H{
+			"message":"venues not found",
+		})
+	}
+
+	var venues []Venue
+	for _, v := range grpcResp.Venues {
+		vn := Venue{
+			Id: int(v.Id),
+			Name: v.Name,
+			Address: v.Address,
+			Capacity: int(v.Capacity),
+		}
+		venues = append(venues, vn)
+	}
+
+	c.JSON(http.StatusOK, venues)
+}

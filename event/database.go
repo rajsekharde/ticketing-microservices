@@ -253,3 +253,32 @@ func (d *database) getEventSeatsQuery(eventId int) ([]eventSeat, error) {
 
 	return eventSeats, nil
 }
+
+// Returns details of all venues
+func (d *database) getVenuesQuery() ([]venue, error) {
+	var venues []venue
+
+	venueQuery := `SELECT id, name, address, capacity FROM venues;`
+
+	rows, err := d.db.Query(venueQuery)
+	if err != nil {
+		return venues, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var v venue
+		err = rows.Scan(
+			&v.id,
+			&v.name,
+			&v.address,
+			&v.capacity,
+		)
+		if err != nil {
+			return venues, err
+		}
+		venues = append(venues, v)
+	}
+
+	return venues, nil
+}

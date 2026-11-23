@@ -678,6 +678,154 @@ func (x *GetEventSeatsResponse) GetSeats() []*Seat {
 	return nil
 }
 
+type Venue struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	Address       string                 `protobuf:"bytes,3,opt,name=address,proto3" json:"address,omitempty"`
+	Capacity      int64                  `protobuf:"varint,4,opt,name=capacity,proto3" json:"capacity,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Venue) Reset() {
+	*x = Venue{}
+	mi := &file_proto_event_event_proto_msgTypes[12]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Venue) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Venue) ProtoMessage() {}
+
+func (x *Venue) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_event_event_proto_msgTypes[12]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Venue.ProtoReflect.Descriptor instead.
+func (*Venue) Descriptor() ([]byte, []int) {
+	return file_proto_event_event_proto_rawDescGZIP(), []int{12}
+}
+
+func (x *Venue) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *Venue) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *Venue) GetAddress() string {
+	if x != nil {
+		return x.Address
+	}
+	return ""
+}
+
+func (x *Venue) GetCapacity() int64 {
+	if x != nil {
+		return x.Capacity
+	}
+	return 0
+}
+
+type GetVenuesRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetVenuesRequest) Reset() {
+	*x = GetVenuesRequest{}
+	mi := &file_proto_event_event_proto_msgTypes[13]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetVenuesRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetVenuesRequest) ProtoMessage() {}
+
+func (x *GetVenuesRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_event_event_proto_msgTypes[13]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetVenuesRequest.ProtoReflect.Descriptor instead.
+func (*GetVenuesRequest) Descriptor() ([]byte, []int) {
+	return file_proto_event_event_proto_rawDescGZIP(), []int{13}
+}
+
+type GetVenuesResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Venues        []*Venue               `protobuf:"bytes,1,rep,name=venues,proto3" json:"venues,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetVenuesResponse) Reset() {
+	*x = GetVenuesResponse{}
+	mi := &file_proto_event_event_proto_msgTypes[14]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetVenuesResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetVenuesResponse) ProtoMessage() {}
+
+func (x *GetVenuesResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_event_event_proto_msgTypes[14]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetVenuesResponse.ProtoReflect.Descriptor instead.
+func (*GetVenuesResponse) Descriptor() ([]byte, []int) {
+	return file_proto_event_event_proto_rawDescGZIP(), []int{14}
+}
+
+func (x *GetVenuesResponse) GetVenues() []*Venue {
+	if x != nil {
+		return x.Venues
+	}
+	return nil
+}
+
 var File_proto_event_event_proto protoreflect.FileDescriptor
 
 const file_proto_event_event_proto_rawDesc = "" +
@@ -725,13 +873,22 @@ const file_proto_event_event_proto_rawDesc = "" +
 	"\x14GetEventSeatsRequest\x12\x19\n" +
 	"\bevent_id\x18\x01 \x01(\x03R\aeventId\":\n" +
 	"\x15GetEventSeatsResponse\x12!\n" +
-	"\x05seats\x18\x01 \x03(\v2\v.event.SeatR\x05seats2\xe6\x02\n" +
+	"\x05seats\x18\x01 \x03(\v2\v.event.SeatR\x05seats\"a\n" +
+	"\x05Venue\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x12\n" +
+	"\x04name\x18\x02 \x01(\tR\x04name\x12\x18\n" +
+	"\aaddress\x18\x03 \x01(\tR\aaddress\x12\x1a\n" +
+	"\bcapacity\x18\x04 \x01(\x03R\bcapacity\"\x12\n" +
+	"\x10GetVenuesRequest\"9\n" +
+	"\x11GetVenuesResponse\x12$\n" +
+	"\x06venues\x18\x01 \x03(\v2\f.event.VenueR\x06venues2\xa6\x03\n" +
 	"\fEventService\x12>\n" +
 	"\tGetHealth\x12\x17.event.GetHealthRequest\x1a\x18.event.GetHealthResponse\x12D\n" +
 	"\vCreateVenue\x12\x19.event.CreateVenueRequest\x1a\x1a.event.CreateVenueResponse\x12D\n" +
 	"\vCreateEvent\x12\x19.event.CreateEventRequest\x1a\x1a.event.CreateEventResponse\x12>\n" +
 	"\tGetEvents\x12\x17.event.GetEventsRequest\x1a\x18.event.GetEventsResponse\x12J\n" +
-	"\rGetEventSeats\x12\x1b.event.GetEventSeatsRequest\x1a\x1c.event.GetEventSeatsResponseBDZBgithub.com/rajsekharde/ticketing-microservices/proto/event;eventpbb\x06proto3"
+	"\rGetEventSeats\x12\x1b.event.GetEventSeatsRequest\x1a\x1c.event.GetEventSeatsResponse\x12>\n" +
+	"\tGetVenues\x12\x17.event.GetVenuesRequest\x1a\x18.event.GetVenuesResponseBDZBgithub.com/rajsekharde/ticketing-microservices/proto/event;eventpbb\x06proto3"
 
 var (
 	file_proto_event_event_proto_rawDescOnce sync.Once
@@ -745,7 +902,7 @@ func file_proto_event_event_proto_rawDescGZIP() []byte {
 	return file_proto_event_event_proto_rawDescData
 }
 
-var file_proto_event_event_proto_msgTypes = make([]protoimpl.MessageInfo, 12)
+var file_proto_event_event_proto_msgTypes = make([]protoimpl.MessageInfo, 15)
 var file_proto_event_event_proto_goTypes = []any{
 	(*GetHealthRequest)(nil),      // 0: event.GetHealthRequest
 	(*GetHealthResponse)(nil),     // 1: event.GetHealthResponse
@@ -759,28 +916,34 @@ var file_proto_event_event_proto_goTypes = []any{
 	(*Seat)(nil),                  // 9: event.Seat
 	(*GetEventSeatsRequest)(nil),  // 10: event.GetEventSeatsRequest
 	(*GetEventSeatsResponse)(nil), // 11: event.GetEventSeatsResponse
-	(*timestamppb.Timestamp)(nil), // 12: google.protobuf.Timestamp
+	(*Venue)(nil),                 // 12: event.Venue
+	(*GetVenuesRequest)(nil),      // 13: event.GetVenuesRequest
+	(*GetVenuesResponse)(nil),     // 14: event.GetVenuesResponse
+	(*timestamppb.Timestamp)(nil), // 15: google.protobuf.Timestamp
 }
 var file_proto_event_event_proto_depIdxs = []int32{
-	12, // 0: event.CreateEventRequest.start_time:type_name -> google.protobuf.Timestamp
-	12, // 1: event.Event.start_time:type_name -> google.protobuf.Timestamp
+	15, // 0: event.CreateEventRequest.start_time:type_name -> google.protobuf.Timestamp
+	15, // 1: event.Event.start_time:type_name -> google.protobuf.Timestamp
 	6,  // 2: event.GetEventsResponse.events:type_name -> event.Event
 	9,  // 3: event.GetEventSeatsResponse.seats:type_name -> event.Seat
-	0,  // 4: event.EventService.GetHealth:input_type -> event.GetHealthRequest
-	2,  // 5: event.EventService.CreateVenue:input_type -> event.CreateVenueRequest
-	4,  // 6: event.EventService.CreateEvent:input_type -> event.CreateEventRequest
-	7,  // 7: event.EventService.GetEvents:input_type -> event.GetEventsRequest
-	10, // 8: event.EventService.GetEventSeats:input_type -> event.GetEventSeatsRequest
-	1,  // 9: event.EventService.GetHealth:output_type -> event.GetHealthResponse
-	3,  // 10: event.EventService.CreateVenue:output_type -> event.CreateVenueResponse
-	5,  // 11: event.EventService.CreateEvent:output_type -> event.CreateEventResponse
-	8,  // 12: event.EventService.GetEvents:output_type -> event.GetEventsResponse
-	11, // 13: event.EventService.GetEventSeats:output_type -> event.GetEventSeatsResponse
-	9,  // [9:14] is the sub-list for method output_type
-	4,  // [4:9] is the sub-list for method input_type
-	4,  // [4:4] is the sub-list for extension type_name
-	4,  // [4:4] is the sub-list for extension extendee
-	0,  // [0:4] is the sub-list for field type_name
+	12, // 4: event.GetVenuesResponse.venues:type_name -> event.Venue
+	0,  // 5: event.EventService.GetHealth:input_type -> event.GetHealthRequest
+	2,  // 6: event.EventService.CreateVenue:input_type -> event.CreateVenueRequest
+	4,  // 7: event.EventService.CreateEvent:input_type -> event.CreateEventRequest
+	7,  // 8: event.EventService.GetEvents:input_type -> event.GetEventsRequest
+	10, // 9: event.EventService.GetEventSeats:input_type -> event.GetEventSeatsRequest
+	13, // 10: event.EventService.GetVenues:input_type -> event.GetVenuesRequest
+	1,  // 11: event.EventService.GetHealth:output_type -> event.GetHealthResponse
+	3,  // 12: event.EventService.CreateVenue:output_type -> event.CreateVenueResponse
+	5,  // 13: event.EventService.CreateEvent:output_type -> event.CreateEventResponse
+	8,  // 14: event.EventService.GetEvents:output_type -> event.GetEventsResponse
+	11, // 15: event.EventService.GetEventSeats:output_type -> event.GetEventSeatsResponse
+	14, // 16: event.EventService.GetVenues:output_type -> event.GetVenuesResponse
+	11, // [11:17] is the sub-list for method output_type
+	5,  // [5:11] is the sub-list for method input_type
+	5,  // [5:5] is the sub-list for extension type_name
+	5,  // [5:5] is the sub-list for extension extendee
+	0,  // [0:5] is the sub-list for field type_name
 }
 
 func init() { file_proto_event_event_proto_init() }
@@ -794,7 +957,7 @@ func file_proto_event_event_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_event_event_proto_rawDesc), len(file_proto_event_event_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   12,
+			NumMessages:   15,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

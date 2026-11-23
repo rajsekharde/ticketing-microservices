@@ -3,6 +3,7 @@ package main
 import "time"
 
 type venue struct {
+	id int
 	name string
 	address string
 	capacity int

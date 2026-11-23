@@ -33,6 +33,7 @@ func main() {
 	router.GET("/health", getHealthHandler)
 	router.POST("/users/register", handlers.CreateUser)
 	router.POST("/users/login", handlers.UserLogin)
+	router.GET("/venues", handlers.GetVenues)
 	router.GET("/events", handlers.GetEvents)
 	router.GET("/events/:id/seats", handlers.GetEventSeats)
 

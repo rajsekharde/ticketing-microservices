@@ -68,10 +68,25 @@ message GetEventSeatsResponse {
   repeated Seat seats = 1;
 }
 
+
+message Venue {
+  int64 id = 1;
+  string name = 2;
+  string address = 3;
+  int64 capacity = 4;
+}
+
+message GetVenuesRequest {}
+
+message GetVenuesResponse {
+  repeated Venue venues = 1;
+}
+
 service EventService {
   rpc GetHealth (GetHealthRequest) returns (GetHealthResponse);
   rpc CreateVenue (CreateVenueRequest) returns (CreateVenueResponse);
   rpc CreateEvent (CreateEventRequest) returns (CreateEventResponse);
   rpc GetEvents (GetEventsRequest) returns (GetEventsResponse);
   rpc GetEventSeats (GetEventSeatsRequest) returns (GetEventSeatsResponse);
+  rpc GetVenues (GetVenuesRequest) returns (GetVenuesResponse);
 }

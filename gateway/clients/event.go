@@ -55,3 +55,9 @@ func (c *EventClient) GetEventSeats(ctx context.Context, req *eventpb.GetEventSe
 	defer cancel()
 	return c.Stub.GetEventSeats(ctx, req)
 }
+
+func (c *EventClient) GetVenues(ctx context.Context, req *eventpb.GetVenuesRequest) (*eventpb.GetVenuesResponse, error) {
+	ctx, cancel := context.WithTimeout(ctx, 2*time.Second)
+	defer cancel()
+	return c.Stub.GetVenues(ctx, req)
+}
