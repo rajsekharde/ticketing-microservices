@@ -1,4 +1,4 @@
-package main
+package clients
 
 import (
 	"fmt"
@@ -8,24 +8,24 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 )
 
-type notificationClient struct {
+type NotificationClient struct {
 	targetAddr string
 	conn *grpc.ClientConn
-	stub notifpb.NotificationServiceClient
+	Stub notifpb.NotificationServiceClient
 }
 
-func newNotificationClient(targetAddr string) (*notificationClient, error) {
+func NewNotificationClient(targetAddr string) (*NotificationClient, error) {
 	conn, err := grpc.NewClient(targetAddr, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		return nil, fmt.Errorf("Notification service connection failed: %w", err)
 	}
-	return &notificationClient{
+	return &NotificationClient{
 		targetAddr: targetAddr,
 		conn: conn,
-		stub: notifpb.NewNotificationServiceClient(conn),
+		Stub: notifpb.NewNotificationServiceClient(conn),
 	}, nil
 }
 
-func (c *notificationClient) close() error {
+func (c *NotificationClient) Close() error {
 	return c.conn.Close()
 }

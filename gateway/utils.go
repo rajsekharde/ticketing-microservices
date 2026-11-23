@@ -15,36 +15,48 @@ import (
 	notifpb "github.com/rajsekharde/ticketing-microservices/proto/notification"
 	paymentpb "github.com/rajsekharde/ticketing-microservices/proto/payment"
 	userpb "github.com/rajsekharde/ticketing-microservices/proto/user"
+
+	"github.com/rajsekharde/ticketing-microservices/gateway/clients"
+	"github.com/rajsekharde/ticketing-microservices/gateway/handlers"
 )
 
-// Creates grpc clients for services
+// Creates grpc clients for services and sends clients to handlers
 func createClients(cfg *config) {
 	var err error
 
-	user, err = newUserClient(cfg.userAddress)
+	user, err = clients.NewUserClient(cfg.userAddress)
 	if err != nil {
 		log.Println(err.Error())
 	}
 
-	event, err = newEventClient(cfg.eventAddress)
+	event, err = clients.NewEventClient(cfg.eventAddress)
 	if err != nil {
 		log.Println(err.Error())
 	}
 
-	booking, err = newBookingClient(cfg.bookingAddress)
+	booking, err = clients.NewBookingClient(cfg.bookingAddress)
 	if err != nil {
 		log.Println(err.Error())
 	}
 
-	payment, err = newPaymentClient(cfg.paymentAddress)
+	payment, err = clients.NewPaymentClient(cfg.paymentAddress)
 	if err != nil {
 		log.Println(err.Error())
 	}
 
-	notification, err = newNotificationClient(cfg.notificationAddress)
+	notification, err = clients.NewNotificationClient(cfg.notificationAddress)
 	if err != nil {
 		log.Println(err.Error())
 	}
+
+	// send clients to handlers package
+	handlers.LoadClients(&handlers.Clients{
+		User: user,
+		Event: event,
+		Booking: booking,
+		Payment: payment,
+		Notification: notification,
+	})
 }
 
 
@@ -56,7 +68,7 @@ type config struct {
 	paymentAddress      string
 	notificationAddress string
 }
-// Loads the contenst of a .env file as environment variables
+// Loads the contents of a .env file as environment variables
 func loadEnv(path string) *config {
 	err := godotenv.Load(path)
 	if err != nil {
@@ -155,50 +167,50 @@ func getHealthHandler(c *gin.Context) {
 		checkFn func(ctx context.Context) (string, string, string, error)
 	}{
 		{"user", func(ctx context.Context) (string, string, string, error) {
-			if user == nil || user.stub == nil {
+			if user == nil || user == nil {
 				return "", "", "", fmt.Errorf("user client not initialized")
 			}
-			resp, err := user.stub.GetHealth(c.Request.Context(), &userpb.GetHealthRequest{})
+			resp, err := user.Stub.GetHealth(c.Request.Context(), &userpb.GetHealthRequest{})
 			if err != nil || resp == nil {
 				return "", "", "", err
 			}
 			return resp.Status, resp.DbStatus, resp.Msg, nil
 		}},
 		{"event", func(ctx context.Context) (string, string, string, error) {
-			if event == nil || event.stub == nil {
+			if event == nil || event.Stub == nil {
 				return "", "", "", fmt.Errorf("client not initialized")
 			}
-			resp, err := event.stub.GetHealth(c.Request.Context(), &eventpb.GetHealthRequest{})
+			resp, err := event.Stub.GetHealth(c.Request.Context(), &eventpb.GetHealthRequest{})
 			if err != nil || resp == nil {
 				return "", "", "", err
 			}
 			return resp.Status, resp.DbStatus, resp.Msg, nil
 		}},
 		{"booking", func(ctx context.Context) (string, string, string, error) {
-			if booking == nil || booking.stub == nil {
+			if booking == nil || booking.Stub == nil {
 				return "", "", "", fmt.Errorf("booking client not initialized")
 			}
-			resp, err := booking.stub.GetHealth(c.Request.Context(), &bookingpb.GetHealthRequest{})
+			resp, err := booking.Stub.GetHealth(c.Request.Context(), &bookingpb.GetHealthRequest{})
 			if err != nil || resp == nil {
 				return "", "", "", err
 			}
 			return resp.Status, resp.DbStatus, resp.Msg, nil
 		}},
 		{"payment", func(ctx context.Context) (string, string, string, error) {
-			if payment == nil || payment.stub == nil {
+			if payment == nil || payment.Stub == nil {
 				return "", "", "", fmt.Errorf("payment client not initialized")
 			}
-			resp, err := payment.stub.GetHealth(c.Request.Context(), &paymentpb.GetHealthRequest{})
+			resp, err := payment.Stub.GetHealth(c.Request.Context(), &paymentpb.GetHealthRequest{})
 			if err != nil || resp == nil {
 				return "", "", "", err
 			}
 			return resp.Status, resp.DbStatus, resp.Msg, nil
 		}},
 		{"notification", func(ctx context.Context) (string, string, string, error) {
-			if notification == nil || notification.stub == nil {
+			if notification == nil || notification.Stub == nil {
 				return "", "", "", fmt.Errorf("notification client not initialized")
 			}
-			resp, err := notification.stub.GetHealth(c.Request.Context(), &notifpb.GetHealthRequest{})
+			resp, err := notification.Stub.GetHealth(c.Request.Context(), &notifpb.GetHealthRequest{})
 			if err != nil || resp == nil {
 				return "", "", "", err
 			}

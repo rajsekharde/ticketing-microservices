@@ -1,4 +1,4 @@
-package main
+package handlers
 
 import (
 	"net/http"
@@ -10,13 +10,13 @@ import (
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
-type createVenueRequest struct {
+type CreateVenueRequest struct {
 	Name string `json:"name"`
 	Address string `json:"address"`
 	Capacity int `json:"capacity"`
 }
-func createVenue(c *gin.Context) {
-	var req createVenueRequest
+func CreateVenue(c *gin.Context) {
+	var req CreateVenueRequest
 
 	err := c.ShouldBindJSON(&req)
 	if err != nil {
@@ -32,7 +32,7 @@ func createVenue(c *gin.Context) {
 		Capacity: int64(req.Capacity),
 	}
 
-	grpcResp, err := event.createVenue(c.Request.Context(), &grpcReq)
+	grpcResp, err := cl.Event.CreateVenue(c.Request.Context(), &grpcReq)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": "failed to create venue",
@@ -46,15 +46,15 @@ func createVenue(c *gin.Context) {
 	})
 }
 
-type createEventRequest struct {
+type CreateEventRequest struct {
 	Name string `json:"name"`
 	VenueId int `json:"venue_id"`
 	StartTime time.Time `json:"start_time"`
 	DurationMinutes int `json:"duration_minutes"`
 	TicketPrice int `json:"ticket_price"`
 }
-func createEvent(c *gin.Context) {
-	var req createEventRequest
+func CreateEvent(c *gin.Context) {
+	var req CreateEventRequest
 
 	err := c.ShouldBindJSON(&req)
 	if err != nil {
@@ -72,7 +72,7 @@ func createEvent(c *gin.Context) {
 		TicketPrice: int64(req.TicketPrice),
 	}
 
-	grpcResp, err := event.createEvent(c.Request.Context(), &grpcReq)
+	grpcResp, err := cl.Event.CreateEvent(c.Request.Context(), &grpcReq)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": "failed to create event",
@@ -86,7 +86,7 @@ func createEvent(c *gin.Context) {
 	})
 }
 
-type eventStruct struct {
+type EventStruct struct {
 	Id int `json:"event_id"`
 	Name string `json:"event_name"`
 	VenueName string `json:"venue_name"`
@@ -95,10 +95,10 @@ type eventStruct struct {
 	DurationMinutes int `json:"duration_minutes"`
 	TicketPrice int `json:"ticket_price"`
 }
-func getEvents(c *gin.Context) {
+func GetEvents(c *gin.Context) {
 	grpcReq := eventpb.GetEventsRequest{}
 
-	grpcResp, err := event.getEvents(c.Request.Context(), &grpcReq)
+	grpcResp, err := cl.Event.GetEvents(c.Request.Context(), &grpcReq)
 	if err != nil || grpcResp == nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": "failed to fetch events",
@@ -112,9 +112,9 @@ func getEvents(c *gin.Context) {
 		return
 	}
 
-	var events []eventStruct
+	var events []EventStruct
 	for _, e := range grpcResp.Events {
-		ev := eventStruct{
+		ev := EventStruct{
 			Id: int(e.Id),
 			Name: e.Name,
 			VenueName: e.VenueName,
@@ -130,14 +130,14 @@ func getEvents(c *gin.Context) {
 	c.JSON(http.StatusOK, events)
 }
 
-type eventSeatStruct struct {
+type EventSeatStruct struct {
 	Id int `json:"event_seat_id"`
 	EventId int `json:"event_id"`
 	SeatId int `json:"seat_id"`
 	Status string `json:"status"`
 	Price int `json:"price"`
 }
-func getEventSeats(c *gin.Context) {
+func GetEventSeats(c *gin.Context) {
 	eventIdParam := c.Param("id")
 	eventId, err := strconv.ParseInt(eventIdParam, 10, 64) // 64-bit decimal
 	if err != nil {
@@ -149,7 +149,7 @@ func getEventSeats(c *gin.Context) {
 
 	grpcReq := eventpb.GetEventSeatsRequest{EventId: eventId}
 
-	grpcResp, err := event.getEventSeats(c.Request.Context(), &grpcReq)
+	grpcResp, err := cl.Event.GetEventSeats(c.Request.Context(), &grpcReq)
 	if err != nil || grpcResp == nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": "failed to fetch event seats",
@@ -161,9 +161,9 @@ func getEventSeats(c *gin.Context) {
 		})
 	}
 
-	var seats []eventSeatStruct
+	var seats []EventSeatStruct
 	for _, s := range grpcResp.Seats {
-		e := eventSeatStruct{
+		e := EventSeatStruct{
 			Id: int(s.Id),
 			EventId: int(s.EventId),
 			SeatId: int(s.SeatId),

@@ -1,4 +1,4 @@
-package main
+package clients
 
 import (
 	"fmt"
@@ -8,24 +8,24 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 )
 
-type bookingClient struct {
+type BookingClient struct {
 	targetAddr string
 	conn *grpc.ClientConn
-	stub bookingpb.BookingServiceClient
+	Stub bookingpb.BookingServiceClient
 }
 
-func newBookingClient(targetAddr string) (*bookingClient, error) {
+func NewBookingClient(targetAddr string) (*BookingClient, error) {
 	conn, err := grpc.NewClient(targetAddr, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		return nil, fmt.Errorf("Booking service connection failed: %w", err)
 	}
-	return &bookingClient{
+	return &BookingClient{
 		targetAddr: targetAddr,
 		conn: conn,
-		stub: bookingpb.NewBookingServiceClient(conn),
+		Stub: bookingpb.NewBookingServiceClient(conn),
 	}, nil
 }
 
-func (c *bookingClient) close() error {
+func (c *BookingClient) Close() error {
 	return c.conn.Close()
 }

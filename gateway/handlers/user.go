@@ -1,4 +1,4 @@
-package main
+package handlers
 
 import (
 	"net/http"
@@ -14,7 +14,7 @@ import (
 
 
 // Returns user data
-func getUserById(c *gin.Context) {
+func GetUserById(c *gin.Context) {
 	// 1. Extract path parameter ":id"
 	idParam := c.Param("id")
 
@@ -28,7 +28,7 @@ func getUserById(c *gin.Context) {
 	}
 
 	// 3. Call the gRPC client wrapper (pass c.Request.Context() for cancellation propagation)
-	user, err := user.getUser(c.Request.Context(), userID)
+	user, err := cl.User.GetUser(c.Request.Context(), userID)
 	if err != nil {
 		// Map gRPC status codes to appropriate HTTP status codes
 		st, ok := status.FromError(err)
@@ -51,7 +51,7 @@ func getUserById(c *gin.Context) {
 }
 
 // Creates a new user
-func createUser(c *gin.Context) {
+func CreateUser(c *gin.Context) {
 	var req shared.CreateUserRequest
 
     // Bind request body to the struct and check for errors
@@ -76,7 +76,7 @@ func createUser(c *gin.Context) {
 		grpcReq.Role = userpb.UserRole_UNSPECIFIED
 	}
 
-	_, err := user.createUser(c.Request.Context(), &grpcReq)
+	_, err := cl.User.CreateUser(c.Request.Context(), &grpcReq)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to create user"})
 		return
@@ -88,7 +88,7 @@ func createUser(c *gin.Context) {
 }
 
 // Handles user login
-func userLogin(c *gin.Context) {
+func UserLogin(c *gin.Context) {
 	var req shared.UserLoginRequest
 
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -102,7 +102,7 @@ func userLogin(c *gin.Context) {
 		Email: req.Email,
 		Password: req.Password,
 	}
-	resp, err := user.userLogin(c.Request.Context(), &grpcReq)
+	resp, err := cl.User.UserLogin(c.Request.Context(), &grpcReq)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{
 			"error": err.Error(),

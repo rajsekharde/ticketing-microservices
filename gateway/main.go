@@ -5,36 +5,39 @@ import (
 	"log"
 
 	"github.com/gin-gonic/gin"
+
+	"github.com/rajsekharde/ticketing-microservices/gateway/clients"
+	"github.com/rajsekharde/ticketing-microservices/gateway/handlers"
 )
 
-var user *userClient
-var event *eventClient
-var booking *bookingClient
-var payment *paymentClient
-var notification *notificationClient
+var user *clients.UserClient
+var event *clients.EventClient
+var booking *clients.BookingClient
+var payment *clients.PaymentClient
+var notification *clients.NotificationClient
 
 func main() {
 	cfg := loadEnv(".env")
 
 	createClients(cfg)
 	defer func() {
-		user.close()
-		event.close()
-		booking.close()
-		payment.close()
-		notification.close()
+		user.Close()
+		event.Close()
+		booking.Close()
+		payment.Close()
+		notification.Close()
 	}()
 
 	router := gin.Default()
 
 	router.GET("/health", getHealthHandler)
-	router.POST("/users/register", createUser)
-	router.GET("/users/:id", getUserById)
-	router.POST("/users/login", userLogin)
-	router.POST("/venues", createVenue)
-	router.POST("/events", createEvent)
-	router.GET("/events", getEvents)
-	router.GET("/events/:id/seats", getEventSeats)
+	router.POST("/users/register", handlers.CreateUser)
+	router.GET("/users/:id", handlers.GetUserById)
+	router.POST("/users/login", handlers.UserLogin)
+	router.POST("/venues", handlers.CreateVenue)
+	router.POST("/events", handlers.CreateEvent)
+	router.GET("/events", handlers.GetEvents)
+	router.GET("/events/:id/seats", handlers.GetEventSeats)
 
 	addr := fmt.Sprintf(":%s", cfg.port)
 	err := router.Run(addr)

@@ -1,4 +1,4 @@
-package main
+package clients
 
 import (
 	"context"
@@ -11,42 +11,42 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 )
 
-type userClient struct {
+type UserClient struct {
 	targetAddr string
 	conn *grpc.ClientConn
-	stub userpb.UserServiceClient
+	Stub userpb.UserServiceClient
 }
 
-func newUserClient(targetAddr string) (*userClient, error) {
+func NewUserClient(targetAddr string) (*UserClient, error) {
 	conn, err := grpc.NewClient(targetAddr, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		return nil, fmt.Errorf("User service connection failed: %w", err)
 	}
-	return &userClient{
+	return &UserClient{
 		targetAddr: targetAddr,
 		conn: conn,
-		stub: userpb.NewUserServiceClient(conn),
+		Stub: userpb.NewUserServiceClient(conn),
 	}, nil
 }
 
-func (c *userClient) close() error {
+func (c *UserClient) Close() error {
 	return c.conn.Close()
 }
 
-func (c *userClient) getUser(ctx context.Context, id int64) (*userpb.User, error) {
+func (c *UserClient) GetUser(ctx context.Context, id int64) (*userpb.User, error) {
 	ctx, cancel := context.WithTimeout(ctx, 2*time.Second)
 	defer cancel()
-	return c.stub.GetUser(ctx, &userpb.GetUserRequest{Id: id})
+	return c.Stub.GetUser(ctx, &userpb.GetUserRequest{Id: id})
 }
 
-func (c *userClient) createUser(ctx context.Context, req *userpb.CreateUserRequest) (*userpb.CreateUserResponse, error) {
+func (c *UserClient) CreateUser(ctx context.Context, req *userpb.CreateUserRequest) (*userpb.CreateUserResponse, error) {
 	ctx, cancel := context.WithTimeout(ctx, 2*time.Second)
 	defer cancel()
-	return c.stub.CreateUser(ctx, req)
+	return c.Stub.CreateUser(ctx, req)
 }
 
-func (c *userClient) userLogin(ctx context.Context, req *userpb.UserLoginRequest) (*userpb.UserLoginResponse, error) {
+func (c *UserClient) UserLogin(ctx context.Context, req *userpb.UserLoginRequest) (*userpb.UserLoginResponse, error) {
 	ctx, cancel := context.WithTimeout(ctx, 2*time.Second)
 	defer cancel()
-	return c.stub.UserLogin(ctx, req)
+	return c.Stub.UserLogin(ctx, req)
 }

@@ -1,4 +1,4 @@
-package main
+package clients
 
 import (
 	"fmt"
@@ -8,24 +8,24 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 )
 
-type paymentClient struct {
+type PaymentClient struct {
 	targetAddr string
 	conn *grpc.ClientConn
-	stub paymentpb.PaymentServiceClient
+	Stub paymentpb.PaymentServiceClient
 }
 
-func newPaymentClient(targetAddr string) (*paymentClient, error) {
+func NewPaymentClient(targetAddr string) (*PaymentClient, error) {
 	conn, err := grpc.NewClient(targetAddr, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		return nil, fmt.Errorf("Payment service connection failed: %w", err)
 	}
-	return &paymentClient{
+	return &PaymentClient{
 		targetAddr: targetAddr,
 		conn: conn,
-		stub: paymentpb.NewPaymentServiceClient(conn),
+		Stub: paymentpb.NewPaymentServiceClient(conn),
 	}, nil
 }
 
-func (c *paymentClient) close() error {
+func (c *PaymentClient) Close() error {
 	return c.conn.Close()
 }
