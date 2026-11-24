@@ -285,23 +285,24 @@ func (d *database) getVenuesQuery() ([]venue, error) {
 	return venues, nil
 }
 
-// Locks a seat by changing status to LOCKED
-func (d *database) lockSeatQuery(eventSeatId int) error {
+// Locks a seat by changing status to LOCKED, returns amount
+func (d *database) lockSeatQuery(eventSeatId int) (int, error) {
 	seatQuery := `
 	UPDATE event_seats
 	SET status = 'LOCKED'
 	WHERE id = $1 AND status = 'AVAILABLE'
-	RETURNING status;
+	RETURNING status, ticket_price;
 	`
 
 	var newStatus string
-	err := d.db.QueryRow(seatQuery, eventSeatId).Scan(&newStatus)
+	var ticketPrice int
+	err := d.db.QueryRow(seatQuery, eventSeatId).Scan(&newStatus, &ticketPrice)
 	if errors.Is(err, sql.ErrNoRows) {
-		return fmt.Errorf("event seat status not changed")
+		return ticketPrice, fmt.Errorf("event seat status not changed")
 	}
 	if err != nil {
-		return err
+		return ticketPrice, err
 	}
 
-	return nil
+	return ticketPrice, nil
 }

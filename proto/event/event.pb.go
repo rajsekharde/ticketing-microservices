@@ -880,6 +880,7 @@ func (x *LockSeatRequest) GetBookingId() int64 {
 
 type LockSeatResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
+	TicketPrice   int64                  `protobuf:"varint,1,opt,name=ticket_price,json=ticketPrice,proto3" json:"ticket_price,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -912,6 +913,13 @@ func (x *LockSeatResponse) ProtoReflect() protoreflect.Message {
 // Deprecated: Use LockSeatResponse.ProtoReflect.Descriptor instead.
 func (*LockSeatResponse) Descriptor() ([]byte, []int) {
 	return file_proto_event_event_proto_rawDescGZIP(), []int{16}
+}
+
+func (x *LockSeatResponse) GetTicketPrice() int64 {
+	if x != nil {
+		return x.TicketPrice
+	}
+	return 0
 }
 
 type BookSeatRequest struct {
@@ -1149,8 +1157,9 @@ const file_proto_event_event_proto_rawDesc = "" +
 	"\x0fLockSeatRequest\x12\"\n" +
 	"\revent_seat_id\x18\x01 \x01(\x03R\veventSeatId\x12\x1d\n" +
 	"\n" +
-	"booking_id\x18\x02 \x01(\x03R\tbookingId\"\x12\n" +
-	"\x10LockSeatResponse\"T\n" +
+	"booking_id\x18\x02 \x01(\x03R\tbookingId\"5\n" +
+	"\x10LockSeatResponse\x12!\n" +
+	"\fticket_price\x18\x01 \x01(\x03R\vticketPrice\"T\n" +
 	"\x0fBookSeatRequest\x12\"\n" +
 	"\revent_seat_id\x18\x01 \x01(\x03R\veventSeatId\x12\x1d\n" +
 	"\n" +

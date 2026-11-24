@@ -101,7 +101,9 @@ message LockSeatRequest {
   int64 booking_id = 2;
 }
 
-message LockSeatResponse {}
+message LockSeatResponse {
+  int64 ticket_price = 1;
+}
 
 // Book event seat
 
