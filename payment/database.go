@@ -11,14 +11,14 @@ import (
 
 type database struct {
 	url string
-	db *sql.DB
+	db  *sql.DB
 }
 
 // Creates a new database connection. Uses values from config struct to create DB URL
 func newDatabase(cfg *config) (*database, error) {
 	// Connection string format: postgres://username:password@host:port/dbname?sslmode=disable
 	url := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=disable",
-	cfg.db_user, cfg.db_password, cfg.db_host, cfg.db_port, cfg.db_name)
+		cfg.db_user, cfg.db_password, cfg.db_host, cfg.db_port, cfg.db_name)
 
 	// intialize datatbase handle, registers configuration, driver, and connection string
 	db, err := sql.Open("pgx", url)
@@ -36,11 +36,30 @@ func newDatabase(cfg *config) (*database, error) {
 
 	return &database{
 		url: url,
-		db: db,
+		db:  db,
 	}, nil
 }
 
 // Closes the DB connection
 func (d *database) close() {
 	d.db.Close()
+}
+
+// Creates DB tables for payment service
+func (d *database) initTables() error {
+	query := `CREATE TABLE IF NOT EXISTS transactions (
+		id SERIAL PRIMARY KEY,
+		booking_id INT NOT NULL,
+		amount INT NOT NULL,
+		status VARCHAR(20) DEFAULT 'PENDING',
+		completed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+		);
+	`
+
+	_, err := d.db.Exec(query)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

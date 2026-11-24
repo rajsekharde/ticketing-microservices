@@ -141,7 +141,7 @@ func (s *server) GetVenues(ctx context.Context, req *eventpb.GetVenuesRequest) (
 func (s *server) LockSeat(ctx context.Context, req *eventpb.LockSeatRequest) (*eventpb.LockSeatResponse, error) {
 	err := db.lockSeatQuery(int(req.EventSeatId))
 	if err != nil {
-		log.Printf("[FAILED] Lock seat: even seat id: %v, error: %v\n", err)
+		log.Printf("[FAILED] Lock seat: even seat id: %v, error: %v\n", req.EventSeatId, err)
 		return nil, status.Errorf(codes.Internal, "failed to lock seat")
 	}
 

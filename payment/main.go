@@ -30,6 +30,14 @@ func main() {
 	}
 	defer db.close()
 
+	// create tables
+	err = db.initTables()
+	if err != nil {
+		log.Printf("Failed to initialize DB tables: %v\n", err)
+	} else {
+		log.Println("Initialized DB tables")
+	}
+
 	addr := ":" + cfg.port
 	lis, err := net.Listen("tcp", addr)
 	if err != nil {
