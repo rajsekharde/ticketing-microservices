@@ -63,3 +63,36 @@ func (d *database) initTables() error {
 
 	return nil
 }
+
+// Create a new transaction
+func (d *database) newTransactionQuery(bookingId int, amount int) (int, error) {
+	query := `
+	INSERT INTO transactions (booking_id, amount)
+	VALUES $1, $2
+	RETURNING id;
+	`
+
+	var transId int
+	err := d.db.QueryRow(query, bookingId, amount).Scan(&transId)
+	if err != nil {
+		return transId, err
+	}
+
+	return transId, nil
+}
+
+// Update transaction status
+func (d *database) updateTransStatusQuery(transId int, newStatus string) error {
+	query := `
+	UPDATE transactions
+	SET status = $1
+	WHERE id = $1;
+	`
+
+	_, err := d.db.Exec(query, newStatus, transId)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

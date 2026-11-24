@@ -117,6 +117,103 @@ func (x *GetHealthResponse) GetMsg() string {
 	return ""
 }
 
+// Complete payment
+type CompletePaymentRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	BookingId     int64                  `protobuf:"varint,1,opt,name=booking_id,json=bookingId,proto3" json:"booking_id,omitempty"`
+	Amount        int64                  `protobuf:"varint,2,opt,name=amount,proto3" json:"amount,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CompletePaymentRequest) Reset() {
+	*x = CompletePaymentRequest{}
+	mi := &file_proto_payment_payment_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CompletePaymentRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CompletePaymentRequest) ProtoMessage() {}
+
+func (x *CompletePaymentRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_payment_payment_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CompletePaymentRequest.ProtoReflect.Descriptor instead.
+func (*CompletePaymentRequest) Descriptor() ([]byte, []int) {
+	return file_proto_payment_payment_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *CompletePaymentRequest) GetBookingId() int64 {
+	if x != nil {
+		return x.BookingId
+	}
+	return 0
+}
+
+func (x *CompletePaymentRequest) GetAmount() int64 {
+	if x != nil {
+		return x.Amount
+	}
+	return 0
+}
+
+type CompletePaymentResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	TransactionId int64                  `protobuf:"varint,1,opt,name=transaction_id,json=transactionId,proto3" json:"transaction_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CompletePaymentResponse) Reset() {
+	*x = CompletePaymentResponse{}
+	mi := &file_proto_payment_payment_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CompletePaymentResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CompletePaymentResponse) ProtoMessage() {}
+
+func (x *CompletePaymentResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_payment_payment_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CompletePaymentResponse.ProtoReflect.Descriptor instead.
+func (*CompletePaymentResponse) Descriptor() ([]byte, []int) {
+	return file_proto_payment_payment_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *CompletePaymentResponse) GetTransactionId() int64 {
+	if x != nil {
+		return x.TransactionId
+	}
+	return 0
+}
+
 var File_proto_payment_payment_proto protoreflect.FileDescriptor
 
 const file_proto_payment_payment_proto_rawDesc = "" +
@@ -126,9 +223,16 @@ const file_proto_payment_payment_proto_rawDesc = "" +
 	"\x11GetHealthResponse\x12\x16\n" +
 	"\x06status\x18\x01 \x01(\tR\x06status\x12\x1b\n" +
 	"\tdb_status\x18\x02 \x01(\tR\bdbStatus\x12\x10\n" +
-	"\x03msg\x18\x03 \x01(\tR\x03msg2T\n" +
+	"\x03msg\x18\x03 \x01(\tR\x03msg\"O\n" +
+	"\x16CompletePaymentRequest\x12\x1d\n" +
+	"\n" +
+	"booking_id\x18\x01 \x01(\x03R\tbookingId\x12\x16\n" +
+	"\x06amount\x18\x02 \x01(\x03R\x06amount\"@\n" +
+	"\x17CompletePaymentResponse\x12%\n" +
+	"\x0etransaction_id\x18\x01 \x01(\x03R\rtransactionId2\xaa\x01\n" +
 	"\x0ePaymentService\x12B\n" +
-	"\tGetHealth\x12\x19.payment.GetHealthRequest\x1a\x1a.payment.GetHealthResponseBHZFgithub.com/rajsekharde/ticketing-microservices/proto/payment;paymentpbb\x06proto3"
+	"\tGetHealth\x12\x19.payment.GetHealthRequest\x1a\x1a.payment.GetHealthResponse\x12T\n" +
+	"\x0fCompletePayment\x12\x1f.payment.CompletePaymentRequest\x1a .payment.CompletePaymentResponseBHZFgithub.com/rajsekharde/ticketing-microservices/proto/payment;paymentpbb\x06proto3"
 
 var (
 	file_proto_payment_payment_proto_rawDescOnce sync.Once
@@ -142,16 +246,20 @@ func file_proto_payment_payment_proto_rawDescGZIP() []byte {
 	return file_proto_payment_payment_proto_rawDescData
 }
 
-var file_proto_payment_payment_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
+var file_proto_payment_payment_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
 var file_proto_payment_payment_proto_goTypes = []any{
-	(*GetHealthRequest)(nil),  // 0: payment.GetHealthRequest
-	(*GetHealthResponse)(nil), // 1: payment.GetHealthResponse
+	(*GetHealthRequest)(nil),        // 0: payment.GetHealthRequest
+	(*GetHealthResponse)(nil),       // 1: payment.GetHealthResponse
+	(*CompletePaymentRequest)(nil),  // 2: payment.CompletePaymentRequest
+	(*CompletePaymentResponse)(nil), // 3: payment.CompletePaymentResponse
 }
 var file_proto_payment_payment_proto_depIdxs = []int32{
 	0, // 0: payment.PaymentService.GetHealth:input_type -> payment.GetHealthRequest
-	1, // 1: payment.PaymentService.GetHealth:output_type -> payment.GetHealthResponse
-	1, // [1:2] is the sub-list for method output_type
-	0, // [0:1] is the sub-list for method input_type
+	2, // 1: payment.PaymentService.CompletePayment:input_type -> payment.CompletePaymentRequest
+	1, // 2: payment.PaymentService.GetHealth:output_type -> payment.GetHealthResponse
+	3, // 3: payment.PaymentService.CompletePayment:output_type -> payment.CompletePaymentResponse
+	2, // [2:4] is the sub-list for method output_type
+	0, // [0:2] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
 	0, // [0:0] is the sub-list for extension extendee
 	0, // [0:0] is the sub-list for field type_name
@@ -168,7 +276,7 @@ func file_proto_payment_payment_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_payment_payment_proto_rawDesc), len(file_proto_payment_payment_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   2,
+			NumMessages:   4,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
