@@ -43,6 +43,7 @@ func main() {
 		protected.GET("/users/:id", handlers.GetUserById)
 		protected.POST("/venues", handlers.CreateVenue)
 		protected.POST("/events", handlers.CreateEvent)
+		protected.POST("/events/seats/book", handlers.BookSeat)
 	}
 
 	addr := fmt.Sprintf(":%s", cfg.port)

@@ -53,6 +53,11 @@ docker-stop:
 	docker compose down --volumes --remove-orphans
 
 
+## run-db: runs the postgres service from docker compose
+run-db:
+	docker compose run --rm -p 5433:5432 -d postgres
+
+
 ## help: Show available commands
 help:
 	@echo "Usage:"

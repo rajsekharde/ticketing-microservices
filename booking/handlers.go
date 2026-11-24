@@ -43,7 +43,7 @@ func (s *server) BookSeat(ctx context.Context, req *bookingpb.BookSeatRequest) (
 	}
 	lockResp, err := cl.event.LockSeat(ctx, &lockReq)
 	if err != nil || lockResp == nil {
-		log.Printf("[FAILED] Book Seat, booking id: %v, Failed to lock seat\n")
+		log.Printf("[FAILED] Book Seat, booking id: %v, Failed to lock seat\n", bookingId)
 		return nil, status.Errorf(codes.Internal, "failed to lock event seat")
 	}
 

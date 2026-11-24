@@ -57,7 +57,7 @@ func (d *database) initTables() error {
 		);`,
 		`CREATE TABLE IF NOT EXISTS booking_items (
 		id SERIAL PRIMARY KEY,
-		booking_id,
+		booking_id INT NOT NULL,
 		event_seat_id INT NOT NULL
 		);`,
 	}
