@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 	"strconv"
 	"time"
@@ -281,4 +282,25 @@ func (d *database) getVenuesQuery() ([]venue, error) {
 	}
 
 	return venues, nil
+}
+
+// Locks a seat by changing status to LOCKED
+func (d *database) lockSeatQuery(eventSeatId int) error {
+	seatQuery := `
+	UPDATE event_seats
+	SET status = 'LOCKED'
+	WHERE id = $1 AND status = 'AVAILABLE'
+	RETURNING status;
+	`
+
+	var newStatus string
+	err := d.db.QueryRow(seatQuery, eventSeatId).Scan(&newStatus)
+	if errors.Is(err, sql.ErrNoRows) {
+		return fmt.Errorf("event seat status not changed")
+	}
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

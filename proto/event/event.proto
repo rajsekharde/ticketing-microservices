@@ -7,6 +7,9 @@ option go_package = "github.com/rajsekharde/ticketing-microservices/proto/event;
 import "google/protobuf/timestamp.proto";
 // import "google/protobuf/duration.proto";
 
+
+// Health endpoint
+
 message GetHealthRequest {}
 
 message GetHealthResponse {
@@ -14,6 +17,8 @@ message GetHealthResponse {
   string db_status = 2;
   string msg = 3;
 }
+
+// Create venue
 
 message CreateVenueRequest {
   string name     = 1;
@@ -24,6 +29,8 @@ message CreateVenueRequest {
 message CreateVenueResponse {
   int64 venue_id = 1;
 }
+
+// Create event
 
 message CreateEventRequest {
   string                    name             = 1;
@@ -36,6 +43,8 @@ message CreateEventRequest {
 message CreateEventResponse {
   int64 event_id = 1;
 }
+
+// Get events
 
 message Event {
   int64 id = 1;
@@ -53,6 +62,8 @@ message GetEventsResponse {
   repeated Event events = 1;
 }
 
+// Get event seats
+
 message Seat {
   int64 id = 1;
   int64 event_id = 2;
@@ -68,6 +79,7 @@ message GetEventSeatsResponse {
   repeated Seat seats = 1;
 }
 
+// Get venues
 
 message Venue {
   int64 id = 1;
@@ -82,6 +94,33 @@ message GetVenuesResponse {
   repeated Venue venues = 1;
 }
 
+// Lock event seat
+
+message LockSeatRequest {
+  int64 event_seat_id = 1;
+  int64 booking_id = 2;
+}
+
+message LockSeatResponse {}
+
+// Book event seat
+
+message BookSeatRequest {
+  int64 event_seat_id = 1;
+  int64 booking_id = 2;
+}
+
+message BookSeatResponse {}
+
+// Release event seat
+
+message ReleaseSeatRequest {
+  int64 event_seat_id = 1;
+  int64 booking_id = 2;
+}
+
+message ReleaseSeatResponse {}
+
 service EventService {
   rpc GetHealth (GetHealthRequest) returns (GetHealthResponse);
   rpc CreateVenue (CreateVenueRequest) returns (CreateVenueResponse);
@@ -89,4 +128,7 @@ service EventService {
   rpc GetEvents (GetEventsRequest) returns (GetEventsResponse);
   rpc GetEventSeats (GetEventSeatsRequest) returns (GetEventSeatsResponse);
   rpc GetVenues (GetVenuesRequest) returns (GetVenuesResponse);
+  rpc LockSeat(LockSeatRequest) returns (LockSeatResponse);
+  rpc BookSeat(BookSeatRequest) returns (BookSeatResponse);
+  rpc ReleaseSeat(ReleaseSeatRequest) returns (ReleaseSeatResponse);
 }

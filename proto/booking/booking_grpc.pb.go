@@ -20,6 +20,7 @@ const _ = grpc.SupportPackageIsVersion9
 
 const (
 	BookingService_GetHealth_FullMethodName = "/booking.BookingService/GetHealth"
+	BookingService_BookSeat_FullMethodName  = "/booking.BookingService/BookSeat"
 )
 
 // BookingServiceClient is the client API for BookingService service.
@@ -27,6 +28,7 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type BookingServiceClient interface {
 	GetHealth(ctx context.Context, in *GetHealthRequest, opts ...grpc.CallOption) (*GetHealthResponse, error)
+	BookSeat(ctx context.Context, in *BookSeatRequest, opts ...grpc.CallOption) (*BookSeatResponse, error)
 }
 
 type bookingServiceClient struct {
@@ -47,11 +49,22 @@ func (c *bookingServiceClient) GetHealth(ctx context.Context, in *GetHealthReque
 	return out, nil
 }
 
+func (c *bookingServiceClient) BookSeat(ctx context.Context, in *BookSeatRequest, opts ...grpc.CallOption) (*BookSeatResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(BookSeatResponse)
+	err := c.cc.Invoke(ctx, BookingService_BookSeat_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // BookingServiceServer is the server API for BookingService service.
 // All implementations must embed UnimplementedBookingServiceServer
 // for forward compatibility.
 type BookingServiceServer interface {
 	GetHealth(context.Context, *GetHealthRequest) (*GetHealthResponse, error)
+	BookSeat(context.Context, *BookSeatRequest) (*BookSeatResponse, error)
 	mustEmbedUnimplementedBookingServiceServer()
 }
 
@@ -64,6 +77,9 @@ type UnimplementedBookingServiceServer struct{}
 
 func (UnimplementedBookingServiceServer) GetHealth(context.Context, *GetHealthRequest) (*GetHealthResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetHealth not implemented")
+}
+func (UnimplementedBookingServiceServer) BookSeat(context.Context, *BookSeatRequest) (*BookSeatResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method BookSeat not implemented")
 }
 func (UnimplementedBookingServiceServer) mustEmbedUnimplementedBookingServiceServer() {}
 func (UnimplementedBookingServiceServer) testEmbeddedByValue()                        {}
@@ -104,6 +120,24 @@ func _BookingService_GetHealth_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
+func _BookingService_BookSeat_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BookSeatRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BookingServiceServer).BookSeat(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: BookingService_BookSeat_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BookingServiceServer).BookSeat(ctx, req.(*BookSeatRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // BookingService_ServiceDesc is the grpc.ServiceDesc for BookingService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -114,6 +148,10 @@ var BookingService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetHealth",
 			Handler:    _BookingService_GetHealth_Handler,
+		},
+		{
+			MethodName: "BookSeat",
+			Handler:    _BookingService_BookSeat_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

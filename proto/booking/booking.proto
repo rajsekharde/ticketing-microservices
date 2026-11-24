@@ -4,6 +4,8 @@ package booking;
 
 option go_package = "github.com/rajsekharde/ticketing-microservices/proto/booking;bookingpb";
 
+// Health endpoint
+
 message GetHealthRequest {}
 
 message GetHealthResponse {
@@ -12,6 +14,19 @@ message GetHealthResponse {
   string msg = 3;
 }
 
+// Event seat booking
+
+message BookSeatRequest {
+  int64 event_seat_id = 1;
+  int64 user_id = 2;
+  int64 event_id = 3;
+}
+
+message BookSeatResponse {
+  int64 booking_id = 1;
+}
+
 service BookingService {
   rpc GetHealth (GetHealthRequest) returns (GetHealthResponse);
+  rpc BookSeat(BookSeatRequest) returns (BookSeatResponse);
 }

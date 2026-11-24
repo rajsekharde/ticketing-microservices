@@ -3,9 +3,7 @@ package main
 import (
 	"log"
 	"net"
-	"os"
 
-	"github.com/joho/godotenv"
 	bookingpb "github.com/rajsekharde/ticketing-microservices/proto/booking"
 	"google.golang.org/grpc"
 )
@@ -16,6 +14,7 @@ type server struct {
 
 var cfg config
 var db *database
+var cl *grpcClients
 
 func main() {
 	cfg = loadEnv(".env")
@@ -30,6 +29,20 @@ func main() {
 	}
 	defer db.close()
 
+	// create tables
+	err = db.initTables()
+	if err != nil {
+		log.Printf("Failed to initialize DB tables: %v\n", err)
+	} else {
+		log.Println("Initialized DB tables")
+	}
+
+	// create grpc clients
+	cl, err = createClients(&cfg)
+	if err != nil {
+		log.Printf("Failed to create clients, error: %v\n", err)
+	}
+
 	addr := ":" + cfg.port
 	lis, err := net.Listen("tcp", addr)
 	if err != nil {
@@ -43,34 +56,5 @@ func main() {
 	err = grpcServer.Serve(lis)
 	if err != nil {
 		log.Fatalf("Failed to serve: %v\n", err)
-	}
-}
-
-type config struct {
-	port string
-	db_host string
-	db_port string
-	db_user string
-	db_password string
-	db_name string
-}
-func loadEnv(path string) config {
-	err := godotenv.Load(path)
-	if err != nil {
-		log.Println("Failed to load env file. Using environment variables")
-	}
-
-	port := os.Getenv("BOOKING_PORT")
-	if port == "" {
-		port = "50053"
-	}
-
-	return config{
-		port: port,
-		db_host: os.Getenv("POSTGRES_HOST"),
-		db_port: os.Getenv("POSTGRES_PORT"),
-		db_user: os.Getenv("POSTGRES_USER"),
-		db_password: os.Getenv("POSTGRES_PASSWORD"),
-		db_name: os.Getenv("BOOKING_DB"),
 	}
 }

@@ -44,3 +44,46 @@ func newDatabase(cfg *config) (*database, error) {
 func (d *database) close() {
 	d.db.Close()
 }
+
+// Creates DB tables for booking service
+func (d *database) initTables() error {
+	queries := []string {
+		`CREATE TABLE IF NOT EXISTS bookings (
+		id SERIAL PRIMARY KEY,
+		event_id INT NOT NULL,
+		user_id INT NOT NULL,
+		status VARCHAR(20) DEFAULT 'PENDING',
+		booked_at TIMESTAMP
+		);`,
+		`CREATE TABLE IF NOT EXISTS booking_items (
+		id SERIAL PRIMARY KEY,
+		booking_id,
+		event_seat_id INT NOT NULL
+		);`,
+	}
+
+	for _, query := range queries {
+		_, err := d.db.Exec(query)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// Creates a new booking entry
+func (d *database) createBookingQuery(event_id int, user_id int) (int, error) {
+	bookingQuery := `
+	INSERT INTO bookings (event_id, user_id)
+	VALUES ($1, $2)
+	RETURNING id;
+	`
+
+	var bookingId int
+	err := d.db.QueryRow(bookingQuery, event_id, user_id).Scan(&bookingId)
+	if err != nil {
+		return bookingId, err
+	}
+
+	return bookingId, nil
+}

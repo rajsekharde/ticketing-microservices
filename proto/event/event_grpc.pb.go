@@ -25,6 +25,9 @@ const (
 	EventService_GetEvents_FullMethodName     = "/event.EventService/GetEvents"
 	EventService_GetEventSeats_FullMethodName = "/event.EventService/GetEventSeats"
 	EventService_GetVenues_FullMethodName     = "/event.EventService/GetVenues"
+	EventService_LockSeat_FullMethodName      = "/event.EventService/LockSeat"
+	EventService_BookSeat_FullMethodName      = "/event.EventService/BookSeat"
+	EventService_ReleaseSeat_FullMethodName   = "/event.EventService/ReleaseSeat"
 )
 
 // EventServiceClient is the client API for EventService service.
@@ -37,6 +40,9 @@ type EventServiceClient interface {
 	GetEvents(ctx context.Context, in *GetEventsRequest, opts ...grpc.CallOption) (*GetEventsResponse, error)
 	GetEventSeats(ctx context.Context, in *GetEventSeatsRequest, opts ...grpc.CallOption) (*GetEventSeatsResponse, error)
 	GetVenues(ctx context.Context, in *GetVenuesRequest, opts ...grpc.CallOption) (*GetVenuesResponse, error)
+	LockSeat(ctx context.Context, in *LockSeatRequest, opts ...grpc.CallOption) (*LockSeatResponse, error)
+	BookSeat(ctx context.Context, in *BookSeatRequest, opts ...grpc.CallOption) (*BookSeatResponse, error)
+	ReleaseSeat(ctx context.Context, in *ReleaseSeatRequest, opts ...grpc.CallOption) (*ReleaseSeatResponse, error)
 }
 
 type eventServiceClient struct {
@@ -107,6 +113,36 @@ func (c *eventServiceClient) GetVenues(ctx context.Context, in *GetVenuesRequest
 	return out, nil
 }
 
+func (c *eventServiceClient) LockSeat(ctx context.Context, in *LockSeatRequest, opts ...grpc.CallOption) (*LockSeatResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(LockSeatResponse)
+	err := c.cc.Invoke(ctx, EventService_LockSeat_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *eventServiceClient) BookSeat(ctx context.Context, in *BookSeatRequest, opts ...grpc.CallOption) (*BookSeatResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(BookSeatResponse)
+	err := c.cc.Invoke(ctx, EventService_BookSeat_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *eventServiceClient) ReleaseSeat(ctx context.Context, in *ReleaseSeatRequest, opts ...grpc.CallOption) (*ReleaseSeatResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ReleaseSeatResponse)
+	err := c.cc.Invoke(ctx, EventService_ReleaseSeat_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // EventServiceServer is the server API for EventService service.
 // All implementations must embed UnimplementedEventServiceServer
 // for forward compatibility.
@@ -117,6 +153,9 @@ type EventServiceServer interface {
 	GetEvents(context.Context, *GetEventsRequest) (*GetEventsResponse, error)
 	GetEventSeats(context.Context, *GetEventSeatsRequest) (*GetEventSeatsResponse, error)
 	GetVenues(context.Context, *GetVenuesRequest) (*GetVenuesResponse, error)
+	LockSeat(context.Context, *LockSeatRequest) (*LockSeatResponse, error)
+	BookSeat(context.Context, *BookSeatRequest) (*BookSeatResponse, error)
+	ReleaseSeat(context.Context, *ReleaseSeatRequest) (*ReleaseSeatResponse, error)
 	mustEmbedUnimplementedEventServiceServer()
 }
 
@@ -144,6 +183,15 @@ func (UnimplementedEventServiceServer) GetEventSeats(context.Context, *GetEventS
 }
 func (UnimplementedEventServiceServer) GetVenues(context.Context, *GetVenuesRequest) (*GetVenuesResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetVenues not implemented")
+}
+func (UnimplementedEventServiceServer) LockSeat(context.Context, *LockSeatRequest) (*LockSeatResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method LockSeat not implemented")
+}
+func (UnimplementedEventServiceServer) BookSeat(context.Context, *BookSeatRequest) (*BookSeatResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method BookSeat not implemented")
+}
+func (UnimplementedEventServiceServer) ReleaseSeat(context.Context, *ReleaseSeatRequest) (*ReleaseSeatResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ReleaseSeat not implemented")
 }
 func (UnimplementedEventServiceServer) mustEmbedUnimplementedEventServiceServer() {}
 func (UnimplementedEventServiceServer) testEmbeddedByValue()                      {}
@@ -274,6 +322,60 @@ func _EventService_GetVenues_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
+func _EventService_LockSeat_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LockSeatRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(EventServiceServer).LockSeat(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: EventService_LockSeat_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(EventServiceServer).LockSeat(ctx, req.(*LockSeatRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _EventService_BookSeat_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BookSeatRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(EventServiceServer).BookSeat(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: EventService_BookSeat_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(EventServiceServer).BookSeat(ctx, req.(*BookSeatRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _EventService_ReleaseSeat_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ReleaseSeatRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(EventServiceServer).ReleaseSeat(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: EventService_ReleaseSeat_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(EventServiceServer).ReleaseSeat(ctx, req.(*ReleaseSeatRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // EventService_ServiceDesc is the grpc.ServiceDesc for EventService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -304,6 +406,18 @@ var EventService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetVenues",
 			Handler:    _EventService_GetVenues_Handler,
+		},
+		{
+			MethodName: "LockSeat",
+			Handler:    _EventService_LockSeat_Handler,
+		},
+		{
+			MethodName: "BookSeat",
+			Handler:    _EventService_BookSeat_Handler,
+		},
+		{
+			MethodName: "ReleaseSeat",
+			Handler:    _EventService_ReleaseSeat_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

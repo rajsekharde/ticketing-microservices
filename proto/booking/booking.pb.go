@@ -117,6 +117,110 @@ func (x *GetHealthResponse) GetMsg() string {
 	return ""
 }
 
+type BookSeatRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	EventSeatId   int64                  `protobuf:"varint,1,opt,name=event_seat_id,json=eventSeatId,proto3" json:"event_seat_id,omitempty"`
+	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	EventId       int64                  `protobuf:"varint,3,opt,name=event_id,json=eventId,proto3" json:"event_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *BookSeatRequest) Reset() {
+	*x = BookSeatRequest{}
+	mi := &file_proto_booking_booking_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *BookSeatRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*BookSeatRequest) ProtoMessage() {}
+
+func (x *BookSeatRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_booking_booking_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use BookSeatRequest.ProtoReflect.Descriptor instead.
+func (*BookSeatRequest) Descriptor() ([]byte, []int) {
+	return file_proto_booking_booking_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *BookSeatRequest) GetEventSeatId() int64 {
+	if x != nil {
+		return x.EventSeatId
+	}
+	return 0
+}
+
+func (x *BookSeatRequest) GetUserId() int64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
+func (x *BookSeatRequest) GetEventId() int64 {
+	if x != nil {
+		return x.EventId
+	}
+	return 0
+}
+
+type BookSeatResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	BookingId     int64                  `protobuf:"varint,1,opt,name=booking_id,json=bookingId,proto3" json:"booking_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *BookSeatResponse) Reset() {
+	*x = BookSeatResponse{}
+	mi := &file_proto_booking_booking_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *BookSeatResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*BookSeatResponse) ProtoMessage() {}
+
+func (x *BookSeatResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_booking_booking_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use BookSeatResponse.ProtoReflect.Descriptor instead.
+func (*BookSeatResponse) Descriptor() ([]byte, []int) {
+	return file_proto_booking_booking_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *BookSeatResponse) GetBookingId() int64 {
+	if x != nil {
+		return x.BookingId
+	}
+	return 0
+}
+
 var File_proto_booking_booking_proto protoreflect.FileDescriptor
 
 const file_proto_booking_booking_proto_rawDesc = "" +
@@ -126,9 +230,17 @@ const file_proto_booking_booking_proto_rawDesc = "" +
 	"\x11GetHealthResponse\x12\x16\n" +
 	"\x06status\x18\x01 \x01(\tR\x06status\x12\x1b\n" +
 	"\tdb_status\x18\x02 \x01(\tR\bdbStatus\x12\x10\n" +
-	"\x03msg\x18\x03 \x01(\tR\x03msg2T\n" +
+	"\x03msg\x18\x03 \x01(\tR\x03msg\"i\n" +
+	"\x0fBookSeatRequest\x12\"\n" +
+	"\revent_seat_id\x18\x01 \x01(\x03R\veventSeatId\x12\x17\n" +
+	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12\x19\n" +
+	"\bevent_id\x18\x03 \x01(\x03R\aeventId\"1\n" +
+	"\x10BookSeatResponse\x12\x1d\n" +
+	"\n" +
+	"booking_id\x18\x01 \x01(\x03R\tbookingId2\x95\x01\n" +
 	"\x0eBookingService\x12B\n" +
-	"\tGetHealth\x12\x19.booking.GetHealthRequest\x1a\x1a.booking.GetHealthResponseBHZFgithub.com/rajsekharde/ticketing-microservices/proto/booking;bookingpbb\x06proto3"
+	"\tGetHealth\x12\x19.booking.GetHealthRequest\x1a\x1a.booking.GetHealthResponse\x12?\n" +
+	"\bBookSeat\x12\x18.booking.BookSeatRequest\x1a\x19.booking.BookSeatResponseBHZFgithub.com/rajsekharde/ticketing-microservices/proto/booking;bookingpbb\x06proto3"
 
 var (
 	file_proto_booking_booking_proto_rawDescOnce sync.Once
@@ -142,16 +254,20 @@ func file_proto_booking_booking_proto_rawDescGZIP() []byte {
 	return file_proto_booking_booking_proto_rawDescData
 }
 
-var file_proto_booking_booking_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
+var file_proto_booking_booking_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
 var file_proto_booking_booking_proto_goTypes = []any{
 	(*GetHealthRequest)(nil),  // 0: booking.GetHealthRequest
 	(*GetHealthResponse)(nil), // 1: booking.GetHealthResponse
+	(*BookSeatRequest)(nil),   // 2: booking.BookSeatRequest
+	(*BookSeatResponse)(nil),  // 3: booking.BookSeatResponse
 }
 var file_proto_booking_booking_proto_depIdxs = []int32{
 	0, // 0: booking.BookingService.GetHealth:input_type -> booking.GetHealthRequest
-	1, // 1: booking.BookingService.GetHealth:output_type -> booking.GetHealthResponse
-	1, // [1:2] is the sub-list for method output_type
-	0, // [0:1] is the sub-list for method input_type
+	2, // 1: booking.BookingService.BookSeat:input_type -> booking.BookSeatRequest
+	1, // 2: booking.BookingService.GetHealth:output_type -> booking.GetHealthResponse
+	3, // 3: booking.BookingService.BookSeat:output_type -> booking.BookSeatResponse
+	2, // [2:4] is the sub-list for method output_type
+	0, // [0:2] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
 	0, // [0:0] is the sub-list for extension extendee
 	0, // [0:0] is the sub-list for field type_name
@@ -168,7 +284,7 @@ func file_proto_booking_booking_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_booking_booking_proto_rawDesc), len(file_proto_booking_booking_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   2,
+			NumMessages:   4,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
