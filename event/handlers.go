@@ -141,7 +141,7 @@ func (s *server) GetVenues(ctx context.Context, req *eventpb.GetVenuesRequest) (
 func (s *server) LockSeat(ctx context.Context, req *eventpb.LockSeatRequest) (*eventpb.LockSeatResponse, error) {
 	ticketPrice, err := db.lockSeatQuery(int(req.EventSeatId))
 	if err != nil {
-		log.Printf("[FAILED] Lock seat: even seat id: %v, error: %v\n", req.EventSeatId, err)
+		log.Printf("[FAILED] Lock seat: event seat id: %v, error: %v\n", req.EventSeatId, err)
 		return nil, status.Errorf(codes.Internal, "failed to lock seat")
 	}
 
@@ -149,4 +149,26 @@ func (s *server) LockSeat(ctx context.Context, req *eventpb.LockSeatRequest) (*e
 	return &eventpb.LockSeatResponse{
 		TicketPrice: int64(ticketPrice),
 	}, nil
+}
+
+func (s *server) BookSeat(ctx context.Context, req *eventpb.BookSeatRequest) (*eventpb.BookSeatResponse, error) {
+	err := db.bookSeatQuery(int(req.EventSeatId))
+	if err != nil {
+		log.Printf("[FAILED] Book seat: event seat id: %v, error: %v\n", req.EventSeatId, err)
+		return nil, status.Errorf(codes.Internal, "failed to book seat")
+	}
+
+	log.Printf("Book seat, event seat id: %v\n", req.EventSeatId)
+	return &eventpb.BookSeatResponse{}, nil
+}
+
+func (s *server) ReleaseSeat(ctx context.Context, req *eventpb.ReleaseSeatRequest) (*eventpb.ReleaseSeatResponse, error) {
+	err := db.releaseSeatQuery(int(req.EventSeatId))
+	if err != nil {
+		log.Printf("[FAILED] Release seat: event seat id: %v, error: %v\n", req.EventSeatId, err)
+		return nil, status.Errorf(codes.Internal, "failed to release seat")
+	}
+
+	log.Printf("Book seat, event seat id: %v\n", req.EventSeatId)
+	return &eventpb.ReleaseSeatResponse{}, nil
 }

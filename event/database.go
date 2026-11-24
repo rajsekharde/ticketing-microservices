@@ -306,3 +306,45 @@ func (d *database) lockSeatQuery(eventSeatId int) (int, error) {
 
 	return ticketPrice, nil
 }
+
+// Books a locked seat by changing status to BOOKED
+func (d *database) bookSeatQuery(eventSeatId int) error {
+	seatQuery := `
+	UPDATE event_seats
+	SET status = 'BOOKED'
+	WHERE id = $1 AND status = 'LOCKED'
+	RETURNING status;
+	`
+
+	var newStatus string
+	err := d.db.QueryRow(seatQuery, eventSeatId).Scan(&newStatus)
+	if errors.Is(err, sql.ErrNoRows) {
+		return fmt.Errorf("event seat not booked")
+	}
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// Releases a locked seat by changing status to AVAILABLE
+func (d *database) releaseSeatQuery(eventSeatId int) error {
+	seatQuery := `
+	UPDATE event_seats
+	SET status = 'AVAILABLE'
+	WHERE id = $1 AND status = 'LOCKED'
+	RETURNING status;
+	`
+
+	var newStatus string
+	err := d.db.QueryRow(seatQuery, eventSeatId).Scan(&newStatus)
+	if errors.Is(err, sql.ErrNoRows) {
+		return fmt.Errorf("event seat not released")
+	}
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
