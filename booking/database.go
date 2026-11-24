@@ -107,3 +107,19 @@ func (d *database) createBookingQuery(eventSeatIds []int, eventId int, userId in
 
 	return bookingId, tx.Commit()
 }
+
+// Updates booking status
+func (d *database) updateBookingStatusQuery(bookingId int, newStatus string) error {
+	query := `
+	UPDATE bookings
+	SET status = $1
+	WHERE id = $2 AND status = 'PENDING';
+	`
+
+	_, err := d.db.Exec(query, newStatus, bookingId)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
