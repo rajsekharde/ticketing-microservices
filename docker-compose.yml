@@ -9,6 +9,8 @@ services:
       - "8000:8000"
     env_file:
       - .env.docker
+    networks:
+      - ticketing-network
   
   user:
     container_name: ticketing-microservices-user
@@ -20,6 +22,60 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+    networks:
+      - ticketing-network
+  
+  event:
+    container_name: ticketing-microservices-event
+    build:
+      context: .
+      dockerfile: event/Dockerfile
+    env_file:
+      - .env.docker
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - ticketing-network
+  
+  booking:
+    container_name: ticketing-microservices-booking
+    build:
+      context: .
+      dockerfile: booking/Dockerfile
+    env_file:
+      - .env.docker
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - ticketing-network
+  
+  payment:
+    container_name: ticketing-microservices-payment
+    build:
+      context: .
+      dockerfile: payment/Dockerfile
+    env_file:
+      - .env.docker
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - ticketing-network
+  
+  notification:
+    container_name: ticketing-microservices-notification
+    build:
+      context: .
+      dockerfile: notification/Dockerfile
+    env_file:
+      - .env.docker
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - ticketing-network
   
   postgres:
     container_name: ticketing-microservices-postgres
@@ -34,6 +90,11 @@ services:
       interval: 3s
       timeout: 3s
       retries: 10
+    networks:
+      - ticketing-network
 
+networks:
+  ticketing-network:
+    driver: bridge
 # Run: docker compose up -d
 # Stop: docker compose down -v  (Removes all containers & volumes)
