@@ -60,14 +60,36 @@ func (s *server) BookSeat(ctx context.Context, req *bookingpb.BookSeatRequest) (
 		Amount: int64(amount),
 	}
 	paymentResp, err := cl.payment.Stub.CompletePayment(ctx, &paymentReq)
-	if err != nil || paymentResp == nil {
-		log.Printf("[FAILED] Book Seat, booking id: %v, Payment failed\n", bookingId)
-		return nil, status.Errorf(codes.Internal, "payment failed")
+	if err != nil {
+		log.Printf("[FAILED] Book Seat, booking id: %v, error completing payment: %v\n", bookingId, err)
+
+		// release seat
+		releaseReq := eventpb.ReleaseSeatRequest{
+			EventSeatId: req.EventSeatId,
+			BookingId: int64(bookingId),
+		}
+		_, err := cl.event.ReleaseSeat(ctx, &releaseReq)
+		if err != nil {
+			log.Printf("[FAILED] Book Seat, booking id: %v, error releasing locked seat: %v\n", bookingId, err)
+		} else {
+			log.Printf("Book Seat, booking id: %v, Locked seat released\n", bookingId)
+		}
+
+		return nil, status.Errorf(codes.Internal, "payment failed, locked seat released")
 	}
 
-	// book or release seat
+	// book seat
+	bookReq := eventpb.BookSeatRequest{
+		EventSeatId: req.EventSeatId,
+		BookingId: int64(bookingId),
+	}
+	_, err = cl.event.BookSeat(ctx, &bookReq)
+	if err != nil {
+		log.Printf("[FAILED] Book Seat, booking id: %v, error booking locked seat: %v\n", bookingId, err)
+		return nil, status.Errorf(codes.Internal, "payment completed, failed to book locked seat")
+	}
 
-	log.Printf("Booking completed. Booking id: %v\n", bookingId)
+	log.Printf("Booking completed. Booking id: %v, Transaction id: %v\n", bookingId, paymentResp.TransactionId)
 	return &bookingpb.BookSeatResponse{
 		BookingId: int64(bookingId),
 	}, nil

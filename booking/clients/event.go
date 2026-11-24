@@ -39,3 +39,15 @@ func (c *EventClient) LockSeat(ctx context.Context, req *eventpb.LockSeatRequest
 	defer cancel()
 	return c.Stub.LockSeat(ctx, req)
 }
+
+func (c *EventClient) BookSeat(ctx context.Context, req *eventpb.BookSeatRequest) (*eventpb.BookSeatResponse, error) {
+	ctx, cancel := context.WithTimeout(ctx, 2*time.Second)
+	defer cancel()
+	return c.Stub.BookSeat(ctx, req)
+}
+
+func (c *EventClient) ReleaseSeat(ctx context.Context, req *eventpb.ReleaseSeatRequest) (*eventpb.ReleaseSeatResponse, error) {
+	ctx, cancel := context.WithTimeout(ctx, 2*time.Second)
+	defer cancel()
+	return c.Stub.ReleaseSeat(ctx, req)
+}

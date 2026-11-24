@@ -169,6 +169,6 @@ func (s *server) ReleaseSeat(ctx context.Context, req *eventpb.ReleaseSeatReques
 		return nil, status.Errorf(codes.Internal, "failed to release seat")
 	}
 
-	log.Printf("Book seat, event seat id: %v\n", req.EventSeatId)
+	log.Printf("Release seat, event seat id: %v\n", req.EventSeatId)
 	return &eventpb.ReleaseSeatResponse{}, nil
 }
