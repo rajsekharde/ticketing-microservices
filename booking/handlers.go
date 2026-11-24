@@ -6,6 +6,8 @@ import (
 
 	bookingpb "github.com/rajsekharde/ticketing-microservices/proto/booking"
 	eventpb "github.com/rajsekharde/ticketing-microservices/proto/event"
+	// paymentpb "github.com/rajsekharde/ticketing-microservices/proto/payment"
+
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -50,6 +52,7 @@ func (s *server) BookSeat(ctx context.Context, req *bookingpb.BookSeatRequest) (
 	}
 
 	// complete payment
+	// paymentReq := paymentpb.CompletePaymentRequest{}
 
 	// book or release seat
 

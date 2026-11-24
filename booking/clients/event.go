@@ -34,12 +34,6 @@ func (c *EventClient) Close() error {
 	return c.conn.Close()
 }
 
-func (c *EventClient) CreateVenue(ctx context.Context, req *eventpb.CreateVenueRequest) (*eventpb.CreateVenueResponse, error) {
-	ctx, cancel := context.WithTimeout(ctx, 2*time.Second)
-	defer cancel()
-	return c.Stub.CreateVenue(ctx, req)
-}
-
 func (c *EventClient) LockSeat(ctx context.Context, req *eventpb.LockSeatRequest) (*eventpb.LockSeatResponse, error) {
 	ctx, cancel := context.WithTimeout(ctx, 2*time.Second)
 	defer cancel()
