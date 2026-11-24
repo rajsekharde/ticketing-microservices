@@ -178,11 +178,13 @@ func GetEventSeats(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": "failed to fetch event seats",
 		})
+		return
 	}
 	if len(grpcResp.Seats) == 0 {
 		c.JSON(http.StatusNotFound, gin.H{
 			"message":"event seats not found",
 		})
+		return
 	}
 
 	var seats []EventSeatStruct
@@ -214,11 +216,13 @@ func GetVenues(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": "failed to fetch venues",
 		})
+		return
 	}
 	if len(grpcResp.Venues) == 0 {
 		c.JSON(http.StatusNotFound, gin.H{
 			"message":"venues not found",
 		})
+		return
 	}
 
 	var venues []Venue

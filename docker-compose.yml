@@ -2,6 +2,7 @@ services:
   
   gateway:
     container_name: ticketing-microservices-gateway
+    image: rajsekhar05/ticketing-ms-gateway:latest
     build:
       context: .
       dockerfile: gateway/Dockerfile
@@ -14,6 +15,7 @@ services:
   
   user:
     container_name: ticketing-microservices-user
+    image: rajsekhar05/ticketing-ms-user:latest
     build:
       context: .
       dockerfile: user/Dockerfile
@@ -27,6 +29,7 @@ services:
   
   event:
     container_name: ticketing-microservices-event
+    image: rajsekhar05/ticketing-ms-event:latest
     build:
       context: .
       dockerfile: event/Dockerfile
@@ -40,6 +43,7 @@ services:
   
   booking:
     container_name: ticketing-microservices-booking
+    image: rajsekhar05/ticketing-ms-booking:latest
     build:
       context: .
       dockerfile: booking/Dockerfile
@@ -53,6 +57,7 @@ services:
   
   payment:
     container_name: ticketing-microservices-payment
+    image: rajsekhar05/ticketing-ms-payment:latest
     build:
       context: .
       dockerfile: payment/Dockerfile
@@ -66,6 +71,7 @@ services:
   
   notification:
     container_name: ticketing-microservices-notification
+    image: rajsekhar05/ticketing-ms-notification:latest
     build:
       context: .
       dockerfile: notification/Dockerfile
