@@ -134,7 +134,8 @@ func (d *database) createEventWithSeatsQuery(e *event) (int, error) {
 	eventQuery := `
 	INSERT INTO events
 	(name, venue_id, start_time, duration_minutes, ticket_price)
-	VALUES ($1, $2, $3, $4, $5) returning id;
+	VALUES ($1, $2, $3, $4, $5)
+	RETURNING id;
 	`
 	eventSeatQuery := `
 	INSERT INTO event_seats (event_id, seat_id, ticket_price) VALUES ($1, $2, $3);

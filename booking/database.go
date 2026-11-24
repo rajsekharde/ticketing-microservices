@@ -71,19 +71,39 @@ func (d *database) initTables() error {
 	return nil
 }
 
-// Creates a new booking entry
-func (d *database) createBookingQuery(event_id int, user_id int) (int, error) {
+// Creates a new booking entry along with its booking items
+func (d *database) createBookingQuery(eventSeatIds []int, eventId int, userId int) (int, error) {
 	bookingQuery := `
 	INSERT INTO bookings (event_id, user_id)
 	VALUES ($1, $2)
 	RETURNING id;
 	`
+	itemQuery := `
+	INSERT INTO booking_items (booking_id, event_seat_id)
+	VALUES ($1, $2);
+	`
 
 	var bookingId int
-	err := d.db.QueryRow(bookingQuery, event_id, user_id).Scan(&bookingId)
+
+	tx, err := d.db.Begin()
 	if err != nil {
 		return bookingId, err
 	}
+	defer tx.Rollback()
 
-	return bookingId, nil
+	// create booking
+	err = tx.QueryRow(bookingQuery, eventId, userId).Scan(&bookingId)
+	if err != nil {
+		return bookingId, err
+	}
+	
+	// create booking items
+	for _, id := range eventSeatIds {
+		_, err = tx.Exec(itemQuery, bookingId, id)
+		if err != nil {
+			return bookingId, err
+		}
+	}
+
+	return bookingId, tx.Commit()
 }

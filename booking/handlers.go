@@ -29,8 +29,10 @@ func (s *server) GetHealth(ctx context.Context, req *bookingpb.GetHealthRequest)
 }
 
 func (s *server) BookSeat(ctx context.Context, req *bookingpb.BookSeatRequest) (*bookingpb.BookSeatResponse, error) {
-	// create new booking entry
-	bookingId, err := db.createBookingQuery(int(req.EventId), int(req.UserId))
+	eventSeatIds := []int{int(req.EventSeatId)}
+	
+	// create new booking entry and booking items
+	bookingId, err := db.createBookingQuery(eventSeatIds, int(req.EventId), int(req.UserId))
 	if err != nil {
 		log.Printf("[FAILED] Book Seat, Error creating new booking: %v\n", err)
 		return nil, status.Errorf(codes.Internal, "failed to create new booking")
@@ -46,6 +48,10 @@ func (s *server) BookSeat(ctx context.Context, req *bookingpb.BookSeatRequest) (
 		log.Printf("[FAILED] Book Seat, booking id: %v, Failed to lock seat\n", bookingId)
 		return nil, status.Errorf(codes.Internal, "failed to lock event seat")
 	}
+
+	// complete payment
+
+	// book or release seat
 
 	return &bookingpb.BookSeatResponse{
 		BookingId: int64(bookingId),
