@@ -51,6 +51,7 @@ func loadEnv(path string) config {
 
 type grpcClients struct {
 	event clients.EventClient
+	payment clients.PaymentClient
 }
 
 func createClients(cgf *config) (*grpcClients, error) {
@@ -59,7 +60,13 @@ func createClients(cgf *config) (*grpcClients, error) {
 		return nil, err
 	}
 
+	payment, err := clients.NewPaymentClient(cfg.paymentAddress)
+	if err != nil {
+		return nil, err
+	}
+
 	return &grpcClients{
 		event: *event,
+		payment: *payment,
 	}, nil
 }

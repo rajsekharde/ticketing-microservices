@@ -68,7 +68,7 @@ func (d *database) initTables() error {
 func (d *database) newTransactionQuery(bookingId int, amount int) (int, error) {
 	query := `
 	INSERT INTO transactions (booking_id, amount)
-	VALUES $1, $2
+	VALUES ($1, $2)
 	RETURNING id;
 	`
 
@@ -86,7 +86,7 @@ func (d *database) updateTransStatusQuery(transId int, newStatus string) error {
 	query := `
 	UPDATE transactions
 	SET status = $1
-	WHERE id = $1;
+	WHERE id = $2;
 	`
 
 	_, err := d.db.Exec(query, newStatus, transId)

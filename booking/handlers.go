@@ -6,6 +6,8 @@ import (
 
 	bookingpb "github.com/rajsekharde/ticketing-microservices/proto/booking"
 	eventpb "github.com/rajsekharde/ticketing-microservices/proto/event"
+	paymentpb "github.com/rajsekharde/ticketing-microservices/proto/payment"
+
 	// paymentpb "github.com/rajsekharde/ticketing-microservices/proto/payment"
 
 	"google.golang.org/grpc/codes"
@@ -52,10 +54,20 @@ func (s *server) BookSeat(ctx context.Context, req *bookingpb.BookSeatRequest) (
 	}
 
 	// complete payment
-	// paymentReq := paymentpb.CompletePaymentRequest{}
+	amount := len(eventSeatIds) * int(lockResp.TicketPrice)
+	paymentReq := paymentpb.CompletePaymentRequest{
+		BookingId: int64(bookingId),
+		Amount: int64(amount),
+	}
+	paymentResp, err := cl.payment.Stub.CompletePayment(ctx, &paymentReq)
+	if err != nil || paymentResp == nil {
+		log.Printf("[FAILED] Book Seat, booking id: %v, Payment failed\n", bookingId)
+		return nil, status.Errorf(codes.Internal, "payment failed")
+	}
 
 	// book or release seat
 
+	log.Printf("Booking completed. Booking id: %v\n", bookingId)
 	return &bookingpb.BookSeatResponse{
 		BookingId: int64(bookingId),
 	}, nil

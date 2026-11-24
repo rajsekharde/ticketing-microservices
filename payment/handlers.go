@@ -48,6 +48,7 @@ func (s *server) CompletePayment(ctx context.Context, req *paymentpb.CompletePay
 		return nil, status.Errorf(codes.Internal, "failed to update transaction status")
 	}
 
+	log.Printf("Payment Completed. Booking id: %v, transaction id: %v\n", req.BookingId, transId)
 	return &paymentpb.CompletePaymentResponse{
 		TransactionId: int64(transId),
 	}, nil
