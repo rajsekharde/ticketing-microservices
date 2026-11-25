@@ -112,7 +112,7 @@ func (d *database) createBookingQuery(eventSeatIds []int, eventId int, userId in
 func (d *database) updateBookingStatusQuery(bookingId int, newStatus string) error {
 	query := `
 	UPDATE bookings
-	SET status = $1
+	SET status = $1, booked_at = CURRENT_TIMESTAMP
 	WHERE id = $2 AND status = 'PENDING';
 	`
 

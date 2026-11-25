@@ -104,3 +104,25 @@ func (s *server) UserLogin(ctx context.Context, req *userpb.UserLoginRequest) (*
 		Jwt: jwt,
 	}, nil
 }
+
+func (s *server) PromoteUser(ctx context.Context, req *userpb.PromoteUserRequest) (*userpb.PromoteUserResponse, error) {
+	caller, err := db.getUserQuery(int(req.CallerId))
+	if err != nil {
+		log.Printf("[FAILED] Promote User. Error verifying caller (id = %v): %v\n", req.CallerId, err)
+		return nil, status.Errorf(codes.Internal, "failed to verify caller")
+	}
+
+	if caller.role != "ADMIN" {
+		log.Printf("[FAILED] Promote User. Caller (id = %v) is not an admin\n", req.CallerId)
+		return nil, status.Errorf(codes.PermissionDenied, "caller is not an admin")
+	}
+
+	err = db.promoteUserQuery(int(req.UserId))
+	if err != nil {
+		log.Printf("[FAILED] Promote User. Error updating user role (id = %v): %v\n", req.CallerId, err)
+		return nil, status.Errorf(codes.Internal, "failed to update user role")
+	}
+
+	log.Printf("Promote user: id = %v\n", req.UserId)
+	return &userpb.PromoteUserResponse{}, nil
+}

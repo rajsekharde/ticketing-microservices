@@ -2,15 +2,18 @@
 
 ## API endpoints
 - GET /health : Returns running status of all services
-- POST /users/register : Creates a new user. Body: {name, email, password, role}
-    - Roles: ADMIN, CUSTOMER
-- GET /users/:id : Returns user data by ID
+- POST /users/register : Creates a new customer user. Body: {name, email, password}
 - POST /users/login : User login. Body: {email, password}
+- POST /users/:id/promote : Promotes a user from role CUSTOMER to ADMIN
+- GET /users/:id : Returns user data by ID
+
 - POST /venues : Create venue with seats. Body: {name, address, capacity}
 - POST /events : Create event with seats. Body: {name, venue_id, start_time, duration_minutes, ticket_price}
     - start_time: RFC 3339 format : "2026-11-12T19:30:00+05:30"
 - GET /events : Returns details of all events
 - GET /events/:id/seats : Returns details of all seats of an event
+
+- POST /events/seats/book : Books an event seat. Body: {event_seat_id, event_id, user_id}
 
 Generate JWT token using the user login endpoint, and send the token as Authorization header for protected endpoints. Some endpoints work only for users with role = ADMIN.
 

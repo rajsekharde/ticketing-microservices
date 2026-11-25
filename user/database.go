@@ -115,3 +115,19 @@ func (d *database) getPasswordQuery(email string) (int, string, string, error) {
 
 	return id, hash, role, nil;
 }
+
+// Promotes a user from customer to admin
+func (d *database) promoteUserQuery(userId int) error {
+	query := `
+	UPDATE users
+	SET role = 'ADMIN'
+	WHERE id = $1;
+	`
+
+	_, err := d.db.Exec(query, userId)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

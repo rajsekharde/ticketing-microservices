@@ -487,6 +487,94 @@ func (x *UserLoginResponse) GetJwt() string {
 	return ""
 }
 
+type PromoteUserRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	UserId        int64                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	CallerId      int64                  `protobuf:"varint,2,opt,name=caller_id,json=callerId,proto3" json:"caller_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *PromoteUserRequest) Reset() {
+	*x = PromoteUserRequest{}
+	mi := &file_proto_user_user_proto_msgTypes[8]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PromoteUserRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PromoteUserRequest) ProtoMessage() {}
+
+func (x *PromoteUserRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_user_user_proto_msgTypes[8]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PromoteUserRequest.ProtoReflect.Descriptor instead.
+func (*PromoteUserRequest) Descriptor() ([]byte, []int) {
+	return file_proto_user_user_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *PromoteUserRequest) GetUserId() int64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
+func (x *PromoteUserRequest) GetCallerId() int64 {
+	if x != nil {
+		return x.CallerId
+	}
+	return 0
+}
+
+type PromoteUserResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *PromoteUserResponse) Reset() {
+	*x = PromoteUserResponse{}
+	mi := &file_proto_user_user_proto_msgTypes[9]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PromoteUserResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PromoteUserResponse) ProtoMessage() {}
+
+func (x *PromoteUserResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_user_user_proto_msgTypes[9]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PromoteUserResponse.ProtoReflect.Descriptor instead.
+func (*PromoteUserResponse) Descriptor() ([]byte, []int) {
+	return file_proto_user_user_proto_rawDescGZIP(), []int{9}
+}
+
 var File_proto_user_user_proto protoreflect.FileDescriptor
 
 const file_proto_user_user_proto_rawDesc = "" +
@@ -515,18 +603,23 @@ const file_proto_user_user_proto_rawDesc = "" +
 	"\x05email\x18\x01 \x01(\tR\x05email\x12\x1a\n" +
 	"\bpassword\x18\x02 \x01(\tR\bpassword\"%\n" +
 	"\x11UserLoginResponse\x12\x10\n" +
-	"\x03jwt\x18\x01 \x01(\tR\x03jwt*4\n" +
+	"\x03jwt\x18\x01 \x01(\tR\x03jwt\"J\n" +
+	"\x12PromoteUserRequest\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\x03R\x06userId\x12\x1b\n" +
+	"\tcaller_id\x18\x02 \x01(\x03R\bcallerId\"\x15\n" +
+	"\x13PromoteUserResponse*4\n" +
 	"\bUserRole\x12\x0f\n" +
 	"\vUNSPECIFIED\x10\x00\x12\f\n" +
 	"\bCUSTOMER\x10\x01\x12\t\n" +
-	"\x05ADMIN\x10\x022\xf7\x01\n" +
+	"\x05ADMIN\x10\x022\xbb\x02\n" +
 	"\vUserService\x12<\n" +
 	"\tGetHealth\x12\x16.user.GetHealthRequest\x1a\x17.user.GetHealthResponse\x12+\n" +
 	"\aGetUser\x12\x14.user.GetUserRequest\x1a\n" +
 	".user.User\x12?\n" +
 	"\n" +
 	"CreateUser\x12\x17.user.CreateUserRequest\x1a\x18.user.CreateUserResponse\x12<\n" +
-	"\tUserLogin\x12\x16.user.UserLoginRequest\x1a\x17.user.UserLoginResponseBBZ@github.com/rajsekharde/ticketing-microservices/proto/user;userpbb\x06proto3"
+	"\tUserLogin\x12\x16.user.UserLoginRequest\x1a\x17.user.UserLoginResponse\x12B\n" +
+	"\vPromoteUser\x12\x18.user.PromoteUserRequest\x1a\x19.user.PromoteUserResponseBBZ@github.com/rajsekharde/ticketing-microservices/proto/user;userpbb\x06proto3"
 
 var (
 	file_proto_user_user_proto_rawDescOnce sync.Once
@@ -541,34 +634,38 @@ func file_proto_user_user_proto_rawDescGZIP() []byte {
 }
 
 var file_proto_user_user_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_proto_user_user_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
+var file_proto_user_user_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
 var file_proto_user_user_proto_goTypes = []any{
-	(UserRole)(0),              // 0: user.UserRole
-	(*GetHealthRequest)(nil),   // 1: user.GetHealthRequest
-	(*GetHealthResponse)(nil),  // 2: user.GetHealthResponse
-	(*CreateUserRequest)(nil),  // 3: user.CreateUserRequest
-	(*CreateUserResponse)(nil), // 4: user.CreateUserResponse
-	(*User)(nil),               // 5: user.User
-	(*GetUserRequest)(nil),     // 6: user.GetUserRequest
-	(*UserLoginRequest)(nil),   // 7: user.UserLoginRequest
-	(*UserLoginResponse)(nil),  // 8: user.UserLoginResponse
+	(UserRole)(0),               // 0: user.UserRole
+	(*GetHealthRequest)(nil),    // 1: user.GetHealthRequest
+	(*GetHealthResponse)(nil),   // 2: user.GetHealthResponse
+	(*CreateUserRequest)(nil),   // 3: user.CreateUserRequest
+	(*CreateUserResponse)(nil),  // 4: user.CreateUserResponse
+	(*User)(nil),                // 5: user.User
+	(*GetUserRequest)(nil),      // 6: user.GetUserRequest
+	(*UserLoginRequest)(nil),    // 7: user.UserLoginRequest
+	(*UserLoginResponse)(nil),   // 8: user.UserLoginResponse
+	(*PromoteUserRequest)(nil),  // 9: user.PromoteUserRequest
+	(*PromoteUserResponse)(nil), // 10: user.PromoteUserResponse
 }
 var file_proto_user_user_proto_depIdxs = []int32{
-	0, // 0: user.CreateUserRequest.role:type_name -> user.UserRole
-	0, // 1: user.User.role:type_name -> user.UserRole
-	1, // 2: user.UserService.GetHealth:input_type -> user.GetHealthRequest
-	6, // 3: user.UserService.GetUser:input_type -> user.GetUserRequest
-	3, // 4: user.UserService.CreateUser:input_type -> user.CreateUserRequest
-	7, // 5: user.UserService.UserLogin:input_type -> user.UserLoginRequest
-	2, // 6: user.UserService.GetHealth:output_type -> user.GetHealthResponse
-	5, // 7: user.UserService.GetUser:output_type -> user.User
-	4, // 8: user.UserService.CreateUser:output_type -> user.CreateUserResponse
-	8, // 9: user.UserService.UserLogin:output_type -> user.UserLoginResponse
-	6, // [6:10] is the sub-list for method output_type
-	2, // [2:6] is the sub-list for method input_type
-	2, // [2:2] is the sub-list for extension type_name
-	2, // [2:2] is the sub-list for extension extendee
-	0, // [0:2] is the sub-list for field type_name
+	0,  // 0: user.CreateUserRequest.role:type_name -> user.UserRole
+	0,  // 1: user.User.role:type_name -> user.UserRole
+	1,  // 2: user.UserService.GetHealth:input_type -> user.GetHealthRequest
+	6,  // 3: user.UserService.GetUser:input_type -> user.GetUserRequest
+	3,  // 4: user.UserService.CreateUser:input_type -> user.CreateUserRequest
+	7,  // 5: user.UserService.UserLogin:input_type -> user.UserLoginRequest
+	9,  // 6: user.UserService.PromoteUser:input_type -> user.PromoteUserRequest
+	2,  // 7: user.UserService.GetHealth:output_type -> user.GetHealthResponse
+	5,  // 8: user.UserService.GetUser:output_type -> user.User
+	4,  // 9: user.UserService.CreateUser:output_type -> user.CreateUserResponse
+	8,  // 10: user.UserService.UserLogin:output_type -> user.UserLoginResponse
+	10, // 11: user.UserService.PromoteUser:output_type -> user.PromoteUserResponse
+	7,  // [7:12] is the sub-list for method output_type
+	2,  // [2:7] is the sub-list for method input_type
+	2,  // [2:2] is the sub-list for extension type_name
+	2,  // [2:2] is the sub-list for extension extendee
+	0,  // [0:2] is the sub-list for field type_name
 }
 
 func init() { file_proto_user_user_proto_init() }
@@ -582,7 +679,7 @@ func file_proto_user_user_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_user_user_proto_rawDesc), len(file_proto_user_user_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   8,
+			NumMessages:   10,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
