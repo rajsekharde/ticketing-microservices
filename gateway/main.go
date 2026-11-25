@@ -41,9 +41,10 @@ func main() {
 	protected.Use(authMiddleware([]byte(cfg.jwtSecretKey), cfg.jwtIssuer))
 	{
 		protected.GET("/users/:id", handlers.GetUserById)
+		protected.POST("/users/:id/promote", handlers.PromoteUser)
 		protected.POST("/venues", handlers.CreateVenue)
 		protected.POST("/events", handlers.CreateEvent)
-		protected.POST("/events/seats/book", handlers.BookSeat)
+		protected.POST("/bookings", handlers.BookSeat)
 	}
 
 	addr := fmt.Sprintf(":%s", cfg.port)

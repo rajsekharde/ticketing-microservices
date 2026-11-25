@@ -70,9 +70,14 @@ func GetUserById(c *gin.Context) {
 	})
 }
 
+type createUserRequest struct {
+	Name string `json:"name"`
+	Email string `json:"email"`
+	Password string `json:"password"`
+}
 // Creates a new user
 func CreateUser(c *gin.Context) {
-	var req shared.CreateUserRequest
+	var req createUserRequest
 
     // Bind request body to the struct and check for errors
     if err := c.ShouldBindJSON(&req); err != nil {
@@ -86,14 +91,7 @@ func CreateUser(c *gin.Context) {
 		Email: req.Email,
 		Name: req.Name,
 		Password: req.Password,
-	}
-	switch req.Role {
-	case "CUSTOMER":
-		grpcReq.Role = userpb.UserRole_CUSTOMER
-	case "ADMIN":
-		grpcReq.Role = userpb.UserRole_ADMIN
-	default:
-		grpcReq.Role = userpb.UserRole_UNSPECIFIED
+		Role: userpb.UserRole_CUSTOMER,
 	}
 
 	grpcResp, err := cl.User.CreateUser(c.Request.Context(), &grpcReq)
@@ -151,32 +149,34 @@ func PromoteUser(c *gin.Context) {
 
 	// get the caller id and role from claims
 	idVal, exists := c.Get("user_id")
-	idClaims, ok := idVal.(int)
-	if !exists || !ok {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
+	idClaims, ok := idVal.(string)
+	callerId, err := strconv.Atoi(idClaims)
+	if !exists || !ok || err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized. failed to extract user_id from claims"})
 		return
 	}
 	roleVal, exists := c.Get("user_role")
 	callerRole, ok := roleVal.(string)
 	if !exists || !ok || callerRole == "" {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized. failed to extract user_role from claims"})
 		return
 	}
 
 	// allow only admins to view other users' details
-	if int(userID) != idClaims && callerRole != "ADMIN" {
+	if int(userID) != callerId && callerRole != "ADMIN" {
 		c.JSON(http.StatusForbidden, gin.H{"error": "forbidden"})
 		return
 	}
 
 	grpcReq := userpb.PromoteUserRequest{
 		UserId: userID,
-		CallerId: int64(idClaims),
+		CallerId: int64(callerId),
 	}
 
 	grpcResp, err := cl.User.Stub.PromoteUser(c.Request.Context(), &grpcReq)
 	if err != nil || grpcResp == nil{
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to promote user"})
+		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{

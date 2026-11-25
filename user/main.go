@@ -38,6 +38,24 @@ func main() {
 	}
 	log.Println("Initialized DB tables")
 
+	// create a default admin user
+	adminPHash, err := hashPassword(cfg.admin_password)
+	if err != nil {
+		log.Println("Failed to hash password for default admin user")
+		adminPHash = ""
+	}
+	adminId, err := db.createUserQuery(&dbUser{
+		name: cfg.admin_name,
+		email: cfg.admin_email,
+		password_hash: adminPHash,
+		role: "ADMIN",
+	})
+	if err != nil {
+		log.Println("Failed to create default admin user, error: %v\n", err)
+	} else {
+		log.Printf("Created default admin user: id = %v\n", adminId)
+	}
+
 	addr := ":" + cfg.port
 	lis, err := net.Listen("tcp", addr)
 	if err != nil {
@@ -56,11 +74,17 @@ func main() {
 
 type config struct {
 	port string
+
 	db_host string
 	db_port string
 	db_user string
 	db_password string
 	db_name string
+
+	admin_name string
+	admin_email string
+	admin_password string
+
 	jwt_secret_key string
 	access_token_expiry_mins int
 	jwtIssuer string
@@ -84,11 +108,17 @@ func loadEnv(path string) *config {
 
 	return &config{
 		port: port,
+
 		db_host: os.Getenv("POSTGRES_HOST"),
 		db_port: os.Getenv("POSTGRES_PORT"),
 		db_user: os.Getenv("POSTGRES_USER"),
 		db_password: os.Getenv("POSTGRES_PASSWORD"),
 		db_name: os.Getenv("USER_DB"),
+
+		admin_name: os.Getenv("USER_ADMIN_NAME"),
+		admin_email: os.Getenv("USER_ADMIN_EMAIL"),
+		admin_password: os.Getenv("USER_ADMIN_PASSWORD"),
+
 		jwt_secret_key: os.Getenv("JWT_SECRET_KEY"),
 		access_token_expiry_mins: mins,
 		jwtIssuer: os.Getenv("JWT_ISSUER"),

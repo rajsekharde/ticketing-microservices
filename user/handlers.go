@@ -69,7 +69,7 @@ func (s *server) CreateUser(ctx context.Context, req *userpb.CreateUserRequest) 
         email: req.Email,
 		password_hash: hash,
         name:  req.Name,
-        role:  req.Role.String(),
+		role: "CUSTOMER",
     })
     if err != nil {
         log.Printf("[FAILED] Create User: email = %v, error: %v\n", req.Email, err.Error())

@@ -13,7 +13,7 @@
 - GET /events : Returns details of all events
 - GET /events/:id/seats : Returns details of all seats of an event
 
-- POST /events/seats/book : Books an event seat. Body: {event_seat_id, event_id, user_id}
+- POST /bookings : Books an event seat. Body: {event_seat_id, event_id, user_id}
 
 Generate JWT token using the user login endpoint, and send the token as Authorization header for protected endpoints. Some endpoints work only for users with role = ADMIN.
 
