@@ -135,3 +135,51 @@ func UserLogin(c *gin.Context) {
 		"access_token": resp.Jwt,
 	})
 }
+
+// Promotes a user to admin
+func PromoteUser(c *gin.Context) {
+	// get user id from request path
+	idParam := c.Param("id")
+
+	userID, err := strconv.ParseInt(idParam, 10, 64)  // 64-bit decimal
+	if err != nil || userID <= 0 {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "invalid user ID, must be a positive integer",
+		})
+		return
+	}
+
+	// get the caller id and role from claims
+	idVal, exists := c.Get("user_id")
+	idClaims, ok := idVal.(int)
+	if !exists || !ok {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
+		return
+	}
+	roleVal, exists := c.Get("user_role")
+	callerRole, ok := roleVal.(string)
+	if !exists || !ok || callerRole == "" {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
+		return
+	}
+
+	// allow only admins to view other users' details
+	if int(userID) != idClaims && callerRole != "ADMIN" {
+		c.JSON(http.StatusForbidden, gin.H{"error": "forbidden"})
+		return
+	}
+
+	grpcReq := userpb.PromoteUserRequest{
+		UserId: userID,
+		CallerId: int64(idClaims),
+	}
+
+	grpcResp, err := cl.User.Stub.PromoteUser(c.Request.Context(), &grpcReq)
+	if err != nil || grpcResp == nil{
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to promote user"})
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "user promoted successfully",
+	})
+}

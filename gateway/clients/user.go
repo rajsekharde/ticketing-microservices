@@ -50,3 +50,9 @@ func (c *UserClient) UserLogin(ctx context.Context, req *userpb.UserLoginRequest
 	defer cancel()
 	return c.Stub.UserLogin(ctx, req)
 }
+
+func (c *UserClient) PromoteUser(ctx context.Context, req *userpb.PromoteUserRequest) (*userpb.PromoteUserResponse, error) {
+	ctx, cancel := context.WithTimeout(ctx, 2*time.Second)
+	defer cancel()
+	return c.Stub.PromoteUser(ctx, req)
+}
